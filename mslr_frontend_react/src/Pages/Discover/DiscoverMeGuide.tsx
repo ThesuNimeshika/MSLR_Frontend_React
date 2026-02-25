@@ -1,8 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../Components/Header';
 import Footer from '../../Components/Footer';
 
 const DiscoverMeGuide: React.FC = () => {
+    const navigate = useNavigate();
     const services = [
         {
             title: 'Experience & Qualifications',
@@ -58,7 +60,10 @@ const DiscoverMeGuide: React.FC = () => {
                     <div className="glass p-10 rounded-[2.5rem] max-w-4xl mx-auto border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
                         <h2 className="text-3xl font-bold mb-4 font-outfit">Ready to start your journey?</h2>
                         <p className="text-text-dim mb-8">Join our network today and let us help you find the perfect role in Sri Lanka.</p>
-                        <button className="px-10 py-4 bg-primary hover:bg-indigo-500 text-white font-bold rounded-2xl shadow-xl shadow-primary/30 transition-all hover:scale-105 active:scale-95 text-xl">
+                        <button
+                            onClick={() => navigate('/overseas-registration')}
+                            className="px-10 py-4 bg-primary hover:bg-indigo-500 text-white font-bold rounded-2xl shadow-xl shadow-primary/30 transition-all hover:scale-105 active:scale-95 text-xl"
+                        >
                             JOIN US
                         </button>
                     </div>

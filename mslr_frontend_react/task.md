@@ -1,8 +1,8 @@
-# Task: Refine Login Validation UI
+# Task: Synchronize Seek Fields with SearchBar
 
 - [x] Create implementation plan
-- [x] Change "Email Address" label to "Email" in login view
-- [x] Display validation error message below the email input
-- [x] Fix TypeScript error in `ValidationCloud` call
-- [x] Verify UI and functional changes
-- [x] Update walkthrough
+- [x] Synchronize categories with `SearchBar.tsx`
+- [x] Implement custom premium dropdown UI
+- [x] Fix remaining "District" references and TypeScript errors
+- [ ] Verify UI and functional changes
+- [ ] Update walkthrough

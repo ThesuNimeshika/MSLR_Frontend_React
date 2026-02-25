@@ -1,23 +1,20 @@
-# Implementation Plan - Login UI Refinement
+# Implementation Plan - Overseas Field Refinement
 
-Finalize the login form by shortening the email label and ensuring validation messages are visible.
+Replace the irrelevant "Home District" field with a "Seek Field" dropdown to allow overseas candidates to specify their industry of interest.
 
 ## Proposed Changes
 
-### [MODIFY] [SeekerLogin.tsx](file:///d:/Thesu/MSLR_Frontend_React/mslr_frontend_react/src/Pages/Auth/SeekerLogin.tsx)
-
-- **Labels**:
-  - Change "Email Address" back to "Email" for the login field.
-- **Error Display**:
-  - Add logic to display the error message text (e.g., "Invalid email address") below the input field when an error exists.
-- **Code Fix**:
-  - Remove the `type="info"` prop from the `ValidationCloud` call to resolve the TypeScript error.
+### [MODIFY] [OverseasRegistration.tsx](file:///d:/Thesu/MSLR_Frontend_React/mslr_frontend_react/src/Pages/Discover/OverseasRegistration.tsx)
+- **State Update**: Rename `district` state field to `seekField`.
+- **UI Update**:
+  - Change label from "Home District" to "Seek Field".
+  - Replace the list of districts with job categories: Technology, Logistics, Design, Finance, Healthcare, Marketing.
+- **Validation Update**: Update the validation logic to check for `seekField` instead of `district`.
 
 ## Verification Plan
 
 ### Manual Verification
-1. Navigate to the Login view.
-2. Observe the label is "Email".
-3. Enter an invalid email and click "LOGIN".
-4. Verify that the error message text appears below the input.
-5. Verify the Signup form still works as expected.
+1. Navigate to the Overseas Registration page.
+2. Verify that "Home District" is gone and "Seek Field" is present.
+3. Check the dropdown options for job categories.
+4. Try to submit without selecting a field and verify the error message.
