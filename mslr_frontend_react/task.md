@@ -1,7 +1,8 @@
-# Task Checklist
+# Task: Refine Login Validation UI
 
-- [x] Install Dependencies (SweetAlert, Toast, DataTables, Tailwind)
-- [x] Configure Tailwind CSS 4
-- [x] Create Demo Component for Verification
-- [x] Verify Build and Functionality
-- [x] Document Setup
+- [x] Create implementation plan
+- [x] Change "Email Address" label to "Email" in login view
+- [x] Display validation error message below the email input
+- [x] Fix TypeScript error in `ValidationCloud` call
+- [x] Verify UI and functional changes
+- [x] Update walkthrough

@@ -2,20 +2,27 @@ import DataTable from 'react-data-table-component';
 import Swal from 'sweetalert2';
 import toast from 'react-hot-toast';
 
+interface RowData {
+    id: number;
+    name: string;
+    role: string;
+    status: string;
+}
+
 const columns = [
     {
         name: 'Name',
-        selector: (row: any) => row.name,
+        selector: (row: RowData) => row.name,
         sortable: true,
     },
     {
         name: 'Role',
-        selector: (row: any) => row.role,
+        selector: (row: RowData) => row.role,
         sortable: true,
     },
     {
         name: 'Status',
-        selector: (row: any) => row.status,
+        selector: (row: RowData) => row.status,
     },
 ];
 

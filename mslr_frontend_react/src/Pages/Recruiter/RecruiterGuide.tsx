@@ -111,7 +111,7 @@ const RecruiterGuide: React.FC = () => {
 
                 <div className="max-w-7xl mx-auto text-center relative z-10">
                     <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md">
-                        <span className="text-primary font-bold text-xs tracking-widest uppercase">💼 For Employers & Recruiters</span>
+                        <span className="text-primary font-bold text-xs tracking-widest uppercase">💼 For Recruiters who wanna advertise</span>
                     </div>
                     <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight font-outfit">
                         Struggling to find the right <span className="text-primary">CANDIDATE? </span>Try us out!
@@ -123,9 +123,9 @@ const RecruiterGuide: React.FC = () => {
                     {/* Simple Process Flow */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
                         {[
-                            { step: '01', title: 'Register with Us', desc: 'Create your company profile to get started with our network.' },
-                            { step: '02', title: 'Agree & Join', desc: 'Accept our recruitment agreements to access advanced tools.' },
-                            { step: '03', title: 'Start Posting', desc: 'Choose a plan that fits and post your first job advertisement.' }
+                            { step: '01', title: 'Choose Your Plan', desc: 'Select the best subscription plan that fits your recruitment needs.' },
+                            { step: '02', title: 'Register with Us', desc: 'Create your account and complete your company profile to get started.' },
+                            { step: '03', title: 'Post your JD', desc: 'Start finding the best talent by posting your job descriptions.' }
                         ].map((item, idx) => (
                             <div key={idx} className="glass p-8 rounded-3xl relative group">
                                 <span className="absolute -top-4 -left-4 w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center font-bold text-xl shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">{item.step}</span>

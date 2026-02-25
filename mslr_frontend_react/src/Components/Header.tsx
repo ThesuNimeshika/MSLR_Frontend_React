@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 
 const Header: React.FC = () => {
@@ -19,8 +19,8 @@ const Header: React.FC = () => {
                     </span>
                 </div>
 
-                <nav className="hidden md:flex space-x-8 text-sm font-medium">
-                    <a href="/" className="text-text hover:text-primary transition-colors">HOME</a>
+                <nav className="hidden md:flex space-x-8 text-base font-medium">
+                    <Link to="/" className="text-text hover:text-primary transition-colors">HOME</Link>
                     <a href="#" className="text-text-dim hover:text-primary transition-colors">JOBS</a>
                     <a href="#" className="text-text-dim hover:text-primary transition-colors">CONTACT US</a>
                 </nav>
@@ -36,11 +36,20 @@ const Header: React.FC = () => {
                     <div className="flex items-center space-x-4">
                         <button
                             onClick={() => navigate('/recruiter-guide')}
-                            className="px-5 py-2 text-sm font-semibold text-text-dim hover:text-text transition-colors cursor-pointer"
+                            className="px-5 py-2 text-base font-semibold text-text-dim hover:text-text transition-colors cursor-pointer"
                         >
-                            Recruiter Login
+                            Post a Job
                         </button>
-                        <button className="px-6 py-2.5 bg-primary hover:bg-indigo-500 text-white text-sm font-bold rounded-xl shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5 active:translate-y-0">
+                        <button
+                            onClick={() => navigate('/discover-me')}
+                            className="px-5 py-2 text-base font-semibold text-text-dim hover:text-text transition-colors cursor-pointer"
+                        >
+                            Discover ME
+                        </button>
+                        <button
+                            onClick={() => navigate('/login')}
+                            className="px-6 py-2.5 bg-primary hover:bg-indigo-500 text-white text-base font-bold rounded-xl shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5 active:translate-y-0"
+                        >
                             Job Seeker Login
                         </button>
                     </div>
@@ -63,12 +72,21 @@ const Header: React.FC = () => {
                     <a href="#" className="text-text-dim text-lg font-medium hover:text-text transition-colors" onClick={() => setIsMenuOpen(false)}>CONTACT US</a>
                     <div className="flex flex-col w-full px-6 space-y-4 pt-4 border-t border-glass-border">
                         <button
+                            onClick={() => { navigate('/discover-me'); setIsMenuOpen(false); }}
+                            className="w-full py-3 text-text font-semibold rounded-xl border border-glass-border"
+                        >
+                            Discover ME
+                        </button>
+                        <button
                             onClick={() => { navigate('/recruiter-guide'); setIsMenuOpen(false); }}
                             className="w-full py-3 text-text font-semibold rounded-xl border border-glass-border"
                         >
                             Recruiter Login
                         </button>
-                        <button className="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-lg">
+                        <button
+                            onClick={() => { navigate('/login'); setIsMenuOpen(false); }}
+                            className="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-lg"
+                        >
                             Job Seeker Login
                         </button>
                     </div>
