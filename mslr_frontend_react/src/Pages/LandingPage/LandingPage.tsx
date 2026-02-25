@@ -44,7 +44,7 @@ const LandingPage: React.FC = () => {
             <Header />
 
             {/* Hero Section */}
-            <section className="relative min-h-screen flex items-center justify-center pt-20 pb-20 px-5 overflow-hidden">
+            <section className="relative flex items-center justify-center pt-32 pb-12 px-5 z-20">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-primary/10 via-transparent to-transparent blur-3xl opacity-50 pointer-events-none"></div>
                 <div className="absolute -top-20 -left-20 w-80 h-80 bg-primary/20 rounded-full blur-[100px] pointer-events-none"></div>
                 <div className="absolute bottom-20 -right-20 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none"></div>
@@ -64,17 +64,10 @@ const LandingPage: React.FC = () => {
                         <SearchBar />
                     </div>
                 </div>
-
-                {/* Scroll Indicator */}
-                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-50 hidden md:block">
-                    <div className="w-6 h-10 rounded-full border-2 border-white/20 flex justify-center p-1">
-                        <div className="w-1.5 h-3 bg-primary rounded-full"></div>
-                    </div>
-                </div>
             </section>
 
             {/* Featured Jobs */}
-            <section className="py-20 px-5 w-full">
+            <section className="py-12 px-5 w-full">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
                     <div>
                         <span className="text-primary font-bold text-sm tracking-widest uppercase mb-2 block">Opportunity</span>
@@ -104,7 +97,7 @@ const LandingPage: React.FC = () => {
             </section>
 
             {/* Job Categories */}
-            <section className="py-20 px-5 bg-white/[0.02] border-y border-white/5 w-full">
+            <section className="py-12 px-5 bg-white/[0.02] border-y border-white/5 w-full">
                 <div className="w-full">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl font-bold mb-4 text-text">Job Categories</h2>
@@ -119,7 +112,7 @@ const LandingPage: React.FC = () => {
             </section>
 
             {/* Top Companies */}
-            <section className="py-20 px-5 w-full">
+            <section className="py-12 px-5 w-full">
                 <div className="text-center mb-16">
                     <h2 className="text-4xl font-bold mb-4 text-text">Top Hiring Companies</h2>
                     <p className="text-text-dim">Partnering with global industry leaders</p>
