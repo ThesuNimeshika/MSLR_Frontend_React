@@ -59,7 +59,7 @@ const DiscoverMeGuide: React.FC = () => {
                         <h2 className="text-3xl font-bold mb-4 font-outfit">Ready to start your journey?</h2>
                         <p className="text-text-dim mb-8">Join our network today and let us help you find the perfect role in Sri Lanka.</p>
                         <button className="px-10 py-4 bg-primary hover:bg-indigo-500 text-white font-bold rounded-2xl shadow-xl shadow-primary/30 transition-all hover:scale-105 active:scale-95 text-xl">
-                            JOIN AS
+                            JOIN US
                         </button>
                     </div>
                 </div>
