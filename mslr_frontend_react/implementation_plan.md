@@ -1,20 +1,23 @@
-# MSLR Plugins and Tailwind Integration Plan
+# Implementation Plan: Premium Light Mode Aesthetics
 
-Add SweetAlert2, React Hot Toast, React Data Table Component, and Tailwind CSS to the project.
+Transform the "boring" light mode cards into a creative, premium experience using layered shadows, subtle gradients, and refined interactive states.
 
 ## Proposed Changes
 
-### Dependencies
-Install the following packages:
-- `sweetalert2`
-- `react-hot-toast`
-- `react-data-table-component`
-- `tailwindcss`, `postcss`, `autoprefixer`
+### [Styling]
+#### [MODIFY] [index.css](file:///d:/Thesu/MSLR_Frontend_React/mslr_frontend_react/src/index.css)
+- Added `--card-shadow` and `--card-hover-shadow` variables.
+- Refined light mode colors for a soft, premium feel.
 
-### Configuration
-1. Initialize and configure Tailwind CSS.
-2. Update `src/index.css` with Tailwind directives.
-3. Integrate Toast container in `App.tsx`.
+### [Components]
+#### [MODIFY] [JobCard.tsx](file:///d:/Thesu/MSLR_Frontend_React/mslr_frontend_react/src/Components/JobCard.tsx)
+- Added soft shadows and subtle indigo tints.
+- Enhanced hover animations and internal spacing.
 
-### Verification
-Create a `PluginDemo.tsx` to showcase all integrated plugins.
+#### [MODIFY] [CategoryCard.tsx](file:///d:/Thesu/MSLR_Frontend_React/mslr_frontend_react/src/Components/CategoryCard.tsx)
+- Added icon-specific colorful backgrounds.
+- Implemented elevation effects and hover accents.
+
+## Verification Plan
+- Toggle to Light mode.
+- Inspect card depth and hover interactions.

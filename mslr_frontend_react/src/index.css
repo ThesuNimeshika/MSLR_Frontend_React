@@ -3,26 +3,52 @@
 
 :root {
   --primary: #6366f1;
-  --primary-glow: rgba(99, 102, 241, 0.5);
+  --primary-glow: rgba(99, 102, 241, 0.4);
   --accent: #f43f5e;
+
+  /* Dark Mode (Default) */
   --bg: #0f172a;
   --card-bg: rgba(30, 41, 59, 0.7);
   --text: #f8fafc;
   --text-dim: #94a3b8;
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --header-bg: rgba(15, 23, 42, 0.8);
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --card-hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+}
+
+:root.light {
+  --bg: #fdfdff;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --text: #1e293b;
+  --text-dim: #64748b;
+  --glass-border: rgba(99, 102, 241, 0.1);
+  --header-bg: rgba(255, 255, 255, 0.85);
+  --primary-glow: rgba(99, 102, 241, 0.15);
+  --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.03), 0 4px 6px -2px rgba(0, 0, 0, 0.01);
+  --card-hover-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.1), 0 10px 10px -5px rgba(99, 102, 241, 0.04);
 }
 
 @theme {
   --color-primary: var(--primary);
   --color-accent: var(--accent);
   --color-dark-bg: var(--bg);
+  --color-text: var(--text);
+  --color-text-dim: var(--text-dim);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
+  background: var(--bg);
   color: var(--text);
   font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1 {
@@ -33,5 +59,11 @@ h1 {
 .glass {
   background: var(--card-bg);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--card-shadow);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass:hover {
+  box-shadow: var(--card-hover-shadow);
 }

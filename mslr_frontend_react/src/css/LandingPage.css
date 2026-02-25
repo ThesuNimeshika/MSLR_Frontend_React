@@ -1,0 +1,57 @@
+.landing-page {
+    background-color: var(--bg);
+    overflow-x: hidden;
+}
+
+.landing-page h1 {
+    line-height: 1.1;
+}
+
+/* Custom Scrollbar for dropdowns */
+.landing-page *::-webkit-scrollbar {
+    width: 6px;
+}
+
+.landing-page *::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.landing-page *::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: 10px;
+}
+
+.landing-page *::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+/* Animations */
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px var(--primary-glow);
+    }
+
+    50% {
+        box-shadow: 0 0 20px var(--primary-glow);
+    }
+
+    100% {
+        box-shadow: 0 0 5px var(--primary-glow);
+    }
+}
+
+.job-card-active {
+    animation: glow 2s infinite;
+}
+
+/* Multi-select checkmark animation */
+.checkmark-enter {
+    transform: scale(0);
+    opacity: 0;
+}
+
+.checkmark-enter-active {
+    transform: scale(1);
+    opacity: 1;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
