@@ -111,18 +111,7 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
-            {/* Top Companies */}
-            <section className="py-12 px-5 w-full">
-                <div className="text-center mb-16">
-                    <h2 className="text-4xl font-bold mb-4 text-text">Top Hiring Companies</h2>
-                    <p className="text-text-dim">Partnering with global industry leaders</p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {companies.map((comp, idx) => (
-                        <CompanyCard key={idx} {...comp} />
-                    ))}
-                </div>
-            </section>
+            {/* Top Companies section removed per request */}
 
             <Footer />
         </div>

@@ -1,28 +1,19 @@
-# Walkthrough - Synchronized Industry Fields
+# Walkthrough - Light Mode Visibility Refinement
 
-I have upgraded the Overseas Registration form to feature a premium, synchronized industry selection that matches the main platform's search experience.
+I have updated the registration and login forms to ensure perfect visibility regardless of the active theme.
 
-## Key Enhancements
+## Visual Enhancements
 
-### 1. Synchronized Categories
-- **Total Alignment**: The "Seek Field" options now perfectly match the industry categories used in the platform's **SearchBar**:
-  - 💻 Technology
-  - 📦 Logistics
-  - 🖋️ Design
-  - 📊 Finance
-  - 🏥 Healthcare
-  - 📢 Marketing
+### 1. High-Contrast Light Mode Borders
+- **Black Borders**: All input fields, including custom dropdowns, now feature solid **black borders** when the application is in Light Mode.
+- **Default Visibility**: These borders are visible by default, ensuring candidates can easily see the fields without having to click on them first.
+- **Dynamic Switching**: The system automatically switches between the premium black borders (Light Mode) and the subtle glass-white borders (Dark Mode).
 
-### 2. Premium Custom Dropdown
-- **Aesthetic UI**: Replaced the standard browser dropdown with a custom **glassmorphism** menu.
-- **Visual Enrichment**: Each category now includes its corresponding icon for a faster and more intuitive selection process.
-- **Micro-Animations**: Added smooth transitions and a rotating arrow indicator to make the interface feel alive.
-
-### 3. Technical Polish
-- **Clean Code**: Resolved all TypeScript lint errors and removed all legacy "District" logic from the overseas flow.
+### 2. Consistent User Experience
+- **Error States**: Maintained the vibrant **red borders** for validation errors across both themes for immediate feedback.
+- **Premium Aesthetics**: Kept the same glassmorphism background and smooth transitions to ensure the portal remains visually stunning.
 
 ## Verification
-- Navigated to Overseas Registration.
-- Clicked the "Seek Field" dropdown: Verified the premium menu appears with icons.
-- Selected "Technology": Verified the selection updates correctly with the icon.
-- Verified validation: Attempted to submit without a selection and confirmed the error message appears.
+- Toggled the portal to **Light Mode**: Verified all inputs in Login, Signup, and Overseas Registration have crisp black borders.
+- Toggled to **Dark Mode**: Confirmed the borders revert to the elegant semi-transparent white.
+- Tested validation: Confirmed red error borders correctly override the default border colors in both themes.

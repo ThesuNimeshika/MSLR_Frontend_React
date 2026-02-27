@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
+// import { useNavigate } from 'react-router-dom';
+// import { toast } from 'react-hot-toast'; // unused imports, commented out
+import { useTheme } from '../../context/ThemeContext';
 import Header from '../../Components/Header';
 import Footer from '../../Components/Footer';
 
 const SeekerLogin: React.FC = () => {
+    const { theme } = useTheme();
     const [authView, setAuthView] = useState<'login' | 'signup' | 'forgot'>('login');
     const [forgotStep, setForgotStep] = useState<'email' | 'reset'>('email');
     const [showOtpPopup, setShowOtpPopup] = useState(false);
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
+    const [showDistrictDropdown, setShowDistrictDropdown] = useState(false);
 
     // Form States
     const [formData, setFormData] = useState({
@@ -36,14 +41,14 @@ const SeekerLogin: React.FC = () => {
         const checked = (e.target as HTMLInputElement).checked;
         const fieldName = type === 'radio' ? name : id;
 
-        setFormData(prev => ({
+        setFormData((prev: any) => ({
             ...prev,
             [fieldName]: type === 'checkbox' ? checked : value
         }));
 
         // Clear error when user changes field
         if (errors[fieldName]) {
-            setErrors(prev => {
+            setErrors((prev: Record<string, string>) => {
                 const newErrors = { ...prev };
                 delete newErrors[fieldName];
                 return newErrors;
@@ -179,7 +184,7 @@ const SeekerLogin: React.FC = () => {
                         </div>
 
                         <div className="flex justify-between gap-2 mb-8">
-                            {otp.map((digit, idx) => (
+                            {otp.map((digit: string, idx: number) => (
                                 <input
                                     key={idx}
                                     id={`otp-${idx}`}
@@ -237,7 +242,7 @@ const SeekerLogin: React.FC = () => {
                                             id="email"
                                             value={formData.email}
                                             onChange={handleChange}
-                                            className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.email ? 'border-red-500' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
+                                            className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.email ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
                                             placeholder="Enter your registered email"
                                         />
                                         {errors.email && (
@@ -266,7 +271,7 @@ const SeekerLogin: React.FC = () => {
                                             id="password"
                                             value={formData.password}
                                             onChange={handleChange}
-                                            className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.password ? 'border-red-500' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
+                                            className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.password ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
                                             placeholder="Enter your password"
                                         />
                                     </div>
@@ -281,7 +286,7 @@ const SeekerLogin: React.FC = () => {
                                                 id="firstName"
                                                 value={formData.firstName}
                                                 onChange={handleChange}
-                                                className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.firstName ? 'border-red-500' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
+                                                className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.firstName ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
                                                 placeholder="John"
                                             />
                                         </div>
@@ -292,7 +297,7 @@ const SeekerLogin: React.FC = () => {
                                                 id="lastName"
                                                 value={formData.lastName}
                                                 onChange={handleChange}
-                                                className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.lastName ? 'border-red-500' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
+                                                className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.lastName ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
                                                 placeholder="Doe"
                                             />
                                         </div>
@@ -305,7 +310,7 @@ const SeekerLogin: React.FC = () => {
                                             id="email"
                                             value={formData.email}
                                             onChange={handleChange}
-                                            className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.email ? 'border-red-500' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
+                                            className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.email ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
                                             placeholder="john.doe@example.com"
                                         />
                                     </div>
@@ -325,7 +330,7 @@ const SeekerLogin: React.FC = () => {
                                                 onChange={handleChange}
                                                 onFocus={() => setShowTooltip(true)}
                                                 onBlur={() => setShowTooltip(false)}
-                                                className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.password ? 'border-red-500' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
+                                                className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.password ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
                                                 placeholder="••••••••"
                                             />
                                         </div>
@@ -336,7 +341,7 @@ const SeekerLogin: React.FC = () => {
                                                 id="confirmPassword"
                                                 value={formData.confirmPassword}
                                                 onChange={handleChange}
-                                                className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.confirmPassword ? 'border-red-500' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
+                                                className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.confirmPassword ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
                                                 placeholder="••••••••"
                                             />
                                         </div>
@@ -369,18 +374,43 @@ const SeekerLogin: React.FC = () => {
                                             </div>
                                         </div>
                                         <div className="relative">
-                                            <label className="block text-sm font-semibold mb-2 ml-1" htmlFor="district">Home District</label>
-                                            <select
-                                                id="district"
-                                                value={formData.district}
-                                                onChange={handleChange}
-                                                className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.district ? 'border-red-500' : 'border-white/10'} text-text focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all appearance-none cursor-pointer`}
+                                            <label className="block text-sm font-semibold mb-2 ml-1">Home District</label>
+                                            <div
+                                                className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.district ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text flex items-center justify-between cursor-pointer hover:border-primary/50 transition-all`}
+                                                onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
                                             >
-                                                <option value="" disabled className="bg-bg">Select District</option>
-                                                {districts.map(d => (
-                                                    <option key={d} value={d} className="bg-bg">{d}</option>
-                                                ))}
-                                            </select>
+                                                <span className={formData.district ? 'text-text' : 'text-text-dim/50'}>
+                                                    {formData.district || 'Select District'}
+                                                </span>
+                                                <span className={`text-text-dim text-xs transition-transform duration-300 ${showDistrictDropdown ? 'rotate-180' : ''}`}>▼</span>
+                                            </div>
+
+                                            {showDistrictDropdown && (
+                                                <div className="absolute top-full left-0 w-full mt-2 glass rounded-[1.5rem] border-white/10 overflow-hidden shadow-2xl z-50 p-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                                                    <div className="max-h-60 overflow-y-auto custom-scrollbar">
+                                                        {districts.map(d => (
+                                                            <div
+                                                                key={d}
+                                                                className={`px-4 py-3 hover:bg-white/5 rounded-xl cursor-pointer transition-all ${formData.district === d ? 'bg-primary/10 border-l-4 border-primary' : ''}`}
+                                                                onClick={() => {
+                                                                    setFormData((prev: any) => ({ ...prev, district: d }));
+                                                                    setShowDistrictDropdown(false);
+                                                                    setErrors((prev: Record<string, string>) => {
+                                                                        const newErrors = { ...prev };
+                                                                        delete newErrors.district;
+                                                                        return newErrors;
+                                                                    });
+                                                                }}
+                                                            >
+                                                                <span className={`text-sm ${formData.district === d ? 'text-primary font-bold' : 'text-text-dim hover:text-text'}`}>{d}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {errors.district && (
+                                                <p className="text-red-500 text-xs mt-2 ml-1">{errors.district}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -395,7 +425,7 @@ const SeekerLogin: React.FC = () => {
                                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                                 accept=".pdf,.doc,.docx"
                                             />
-                                            <div className="w-full px-5 py-4 rounded-2xl bg-white/5 border border-dashed border-white/20 group-hover:border-primary/50 transition-all flex items-center justify-between">
+                                            <div className={`w-full px-5 py-4 rounded-2xl bg-white/5 border border-dashed ${theme === 'light' ? 'border-black' : 'border-white/20'} group-hover:border-primary/50 transition-all flex items-center justify-between`}>
                                                 <span className="text-text-dim/70 truncate mr-2">
                                                     {cvFile ? cvFile.name : 'Choose your CV (PDF, DOC)'}
                                                 </span>
@@ -429,7 +459,7 @@ const SeekerLogin: React.FC = () => {
                                                 id="email"
                                                 value={formData.email}
                                                 onChange={handleChange}
-                                                className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.email ? 'border-red-500' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
+                                                className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.email ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
                                                 placeholder="Enter your registered email"
                                             />
                                         </div>
@@ -442,7 +472,7 @@ const SeekerLogin: React.FC = () => {
                                                     id="password"
                                                     value={formData.password}
                                                     onChange={handleChange}
-                                                    className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.password ? 'border-red-500' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
+                                                    className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.password ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
                                                     placeholder="Enter new password"
                                                 />
                                             </div>
@@ -453,7 +483,7 @@ const SeekerLogin: React.FC = () => {
                                                     id="confirmPassword"
                                                     value={formData.confirmPassword}
                                                     onChange={handleChange}
-                                                    className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.confirmPassword ? 'border-red-500' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
+                                                    className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.confirmPassword ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
                                                     placeholder="Confirm new password"
                                                 />
                                             </div>

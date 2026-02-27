@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useTheme } from '../../context/ThemeContext';
 import Header from '../../Components/Header';
 import Footer from '../../Components/Footer';
 
 const OverseasRegistration: React.FC = () => {
+    const { theme } = useTheme();
     // Form States
     const [formData, setFormData] = useState({
         email: '',
@@ -120,7 +122,7 @@ const OverseasRegistration: React.FC = () => {
                                         id="firstName"
                                         value={formData.firstName}
                                         onChange={handleChange}
-                                        className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.firstName ? 'border-red-500' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
+                                        className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.firstName ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
                                         placeholder="John"
                                     />
                                 </div>
@@ -131,7 +133,7 @@ const OverseasRegistration: React.FC = () => {
                                         id="lastName"
                                         value={formData.lastName}
                                         onChange={handleChange}
-                                        className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.lastName ? 'border-red-500' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
+                                        className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.lastName ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
                                         placeholder="Doe"
                                     />
                                 </div>
@@ -144,7 +146,7 @@ const OverseasRegistration: React.FC = () => {
                                     id="email"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.email ? 'border-red-500' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
+                                    className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.email ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
                                     placeholder="john.doe@example.com"
                                 />
                             </div>
@@ -164,7 +166,7 @@ const OverseasRegistration: React.FC = () => {
                                         onChange={handleChange}
                                         onFocus={() => setShowTooltip(true)}
                                         onBlur={() => setShowTooltip(false)}
-                                        className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.password ? 'border-red-500' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
+                                        className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.password ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
                                         placeholder="••••••••"
                                     />
                                 </div>
@@ -175,7 +177,7 @@ const OverseasRegistration: React.FC = () => {
                                         id="confirmPassword"
                                         value={formData.confirmPassword}
                                         onChange={handleChange}
-                                        className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.confirmPassword ? 'border-red-500' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
+                                        className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.confirmPassword ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text placeholder:text-text-dim/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all`}
                                         placeholder="••••••••"
                                     />
                                 </div>
@@ -210,7 +212,7 @@ const OverseasRegistration: React.FC = () => {
                                 <div className="relative">
                                     <label className="block text-sm font-semibold mb-2 ml-1">Seek Field</label>
                                     <div
-                                        className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.seekField ? 'border-red-500' : 'border-white/10'} text-text flex items-center justify-between cursor-pointer hover:border-primary/50 transition-all`}
+                                        className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.seekField ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text flex items-center justify-between cursor-pointer hover:border-primary/50 transition-all`}
                                         onClick={() => setShowFieldDropdown(!showFieldDropdown)}
                                     >
                                         <span className={formData.seekField ? 'text-text' : 'text-text-dim/50'}>
@@ -262,7 +264,7 @@ const OverseasRegistration: React.FC = () => {
                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                         accept=".pdf,.doc,.docx"
                                     />
-                                    <div className="w-full px-5 py-4 rounded-2xl bg-white/5 border border-dashed border-white/20 group-hover:border-primary/50 transition-all flex items-center justify-between">
+                                    <div className={`w-full px-5 py-4 rounded-2xl bg-white/5 border border-dashed ${theme === 'light' ? 'border-black' : 'border-white/20'} group-hover:border-primary/50 transition-all flex items-center justify-between`}>
                                         <span className="text-text-dim/70 truncate mr-2">
                                             {cvFile ? cvFile.name : 'Choose your CV (PDF, DOC)'}
                                         </span>

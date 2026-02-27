@@ -1,8 +1,9 @@
-# Task: Synchronize Seek Fields with SearchBar
+# Task: Refine Input Borders for Light Mode
 
 - [x] Create implementation plan
-- [x] Synchronize categories with `SearchBar.tsx`
-- [x] Implement custom premium dropdown UI
-- [x] Fix remaining "District" references and TypeScript errors
-- [ ] Verify UI and functional changes
+- [x] Check `ThemeContext.tsx` for light mode detection logic
+- [x] Update `SeekerLogin.tsx` input borders for light mode
+- [x] Update `OverseasRegistration.tsx` input borders for light mode
+- [/] Fix lint errors in `SeekerLogin.tsx` [ ]
+- [ ] Verify styling changes in both themes
 - [ ] Update walkthrough
