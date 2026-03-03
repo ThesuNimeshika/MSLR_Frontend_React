@@ -1,22 +1,27 @@
-# Implementation Plan - Light Mode Input Borders
+# Implementation Plan - Fix Lint and Build Errors
 
-Ensure all input fields in the registration and login forms have solid black borders when the light theme is active, maintaining high contrast and readability.
+Fix "components created during render" violations, unused variables, and explicit `any` types to allow the project to build and run successfully.
 
 ## Proposed Changes
 
-### [MODIFY] [SeekerLogin.tsx](file:///d:/Thesu/MSLR_Frontend_React/mslr_frontend_react/src/Pages/Auth/SeekerLogin.tsx)
-- Use the `useTheme` hook to detect the current theme.
-- Update the `className` of all input fields and custom dropdowns.
-- Apply `theme === 'light' ? 'border-black' : 'border-white/10'` for standard state.
-- Keep `border-red-500` for error states regardless of theme.
+### [Pages]
 
-### [MODIFY] [OverseasRegistration.tsx](file:///d:/Thesu/MSLR_Frontend_React/mslr_frontend_react/src/Pages/Discover/OverseasRegistration.tsx)
-- Apply the same theme-aware border logic to all inputs and custom dropdowns in this component.
+#### [MODIFY] [LandingPage.tsx](file:///d:/Thesu/MSLR_Frontend_React/mslr_frontend_react/src/Pages/LandingPage/LandingPage.tsx)
+- Remove unused `CompanyCard` import.
+- Remove unused `companies` constant.
+
+#### [MODIFY] [SeekerLogin.tsx](file:///d:/Thesu/MSLR_Frontend_React/mslr_frontend_react/src/Pages/Auth/SeekerLogin.tsx)
+- Move `ValidationCloud` component definition outside of `SeekerLogin` component.
+- Replace `any` types in `setFormData` and `setErrors` with proper types or inferred types.
+
+#### [MODIFY] [OverseasRegistration.tsx](file:///d:/Thesu/MSLR_Frontend_React/mslr_frontend_react/src/Pages/Discover/OverseasRegistration.tsx)
+- Move `ValidationCloud` component definition outside of `OverseasRegistration` component.
 
 ## Verification Plan
 
+### Automated Tests
+- Run `npm run lint` to verify all lint errors are resolved.
+- Run `npm run build` to verify the project builds successfully.
+
 ### Manual Verification
-1. Toggle the application to Light Mode.
-2. Navigate to the Login, Sign-Up, and Overseas Registration pages.
-3. Verify that all input fields (including custom dropdowns) have distinct black borders.
-4. Toggle back to Dark Mode and verify the original light borders are restored.
+- Run `npm run dev` and verify that the Landing Page, Login Page, and Overseas Registration page load correctly.

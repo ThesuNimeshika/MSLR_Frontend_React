@@ -8,49 +8,53 @@ const Header: React.FC = () => {
     const navigate = useNavigate();
 
     return (
-        <header className="fixed top-0 left-0 w-full z-50 glass py-4">
-            <div className="w-full px-5 flex justify-between items-center">
-                <div className="flex items-center space-x-2">
-                    <div className="w-10 h-10 bg-gradient-to-br from-primary to-indigo-400 rounded-lg flex items-center justify-center shadow-lg shadow-primary/20">
-                        <span className="text-white font-bold text-xl">M</span>
+        <header className="fixed top-0 left-0 w-full z-50 glass py-5 border-b border-white/5">
+            <div className="max-w-[1700px] mx-auto px-8 flex justify-between items-center">
+                <div className="flex items-center space-x-3 group cursor-pointer" onClick={() => navigate('/')}>
+                    <div className="w-11 h-11 bg-gradient-to-br from-primary via-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl shadow-primary/20 transform group-hover:rotate-6 transition-all duration-300">
+                        <span className="text-white font-black text-2xl">M</span>
                     </div>
-                    <span className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-text to-text-dim transition-colors">
-                        MSL<span className="text-primary">R</span>
-                    </span>
+                    <div className="flex flex-col -space-y-1">
+                        <span className="text-2xl font-black tracking-tighter text-text">
+                            MSL<span className="text-primary">R</span>
+                        </span>
+                        <span className="text-[10px] font-bold tracking-[0.3em] text-primary/80 uppercase">Recruitment</span>
+                    </div>
                 </div>
 
-                <nav className="hidden md:flex space-x-8 text-base font-medium">
-                    <Link to="/" className="text-text hover:text-primary transition-colors">HOME</Link>
-                    <a href="#" className="text-text-dim hover:text-primary transition-colors">JOBS</a>
-                    <a href="#" className="text-text-dim hover:text-primary transition-colors">CONTACT US</a>
+                <nav className="hidden lg:flex items-center space-x-10 text-sm font-bold tracking-widest">
+                    <Link to="/" className="text-primary relative after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-0.5 after:bg-primary transition-all">HOME</Link>
+                    <a href="#" className="text-text-dim hover:text-text transition-all hover:-translate-y-0.5">JOBS</a>
+                    <a href="#" className="text-text-dim hover:text-text transition-all hover:-translate-y-0.5">RESOURCES</a>
+                    <a href="#" className="text-text-dim hover:text-text transition-all hover:-translate-y-0.5">CONTACT</a>
                 </nav>
 
-                <div className="hidden md:flex items-center space-x-6">
+                <div className="hidden md:flex items-center space-x-8">
                     <button
                         onClick={toggleTheme}
-                        className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-xl hover:bg-white/10 transition-all active:scale-95"
+                        className="p-3 rounded-2xl bg-white/5 border border-white/10 text-xl hover:bg-white/10 hover:border-white/20 transition-all active:scale-90"
                         title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                     >
-                        {theme === 'dark' ? '☀️' : '🌙'}
+                        {theme === 'dark' ? '✨' : '🌙'}
                     </button>
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
                         <button
                             onClick={() => navigate('/recruiter-guide')}
-                            className="px-5 py-2 text-base font-semibold text-text-dim hover:text-text transition-colors cursor-pointer"
+                            className="px-5 py-3 text-sm font-bold text-text-dim hover:text-text transition-all rounded-xl hover:bg-white/5 cursor-pointer"
                         >
                             Post a Job
                         </button>
                         <button
                             onClick={() => navigate('/discover-me')}
-                            className="px-5 py-2 text-base font-semibold text-text-dim hover:text-text transition-colors cursor-pointer"
+                            className="px-6 py-3 text-sm font-bold text-text hover:text-primary transition-all rounded-xl hover:bg-white/5"
                         >
                             Discover ME
                         </button>
                         <button
                             onClick={() => navigate('/login')}
-                            className="px-6 py-2.5 bg-primary hover:bg-indigo-500 text-white text-base font-bold rounded-xl shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5 active:translate-y-0"
+                            className="px-8 py-3.5 bg-primary hover:bg-indigo-500 text-white text-sm font-black rounded-2xl shadow-2xl shadow-primary/40 transition-all transform hover:-translate-y-1 active:translate-y-0 hover:scale-[1.02]"
                         >
-                            Job Seeker Login
+                            Candidate Portal
                         </button>
                     </div>
                 </div>

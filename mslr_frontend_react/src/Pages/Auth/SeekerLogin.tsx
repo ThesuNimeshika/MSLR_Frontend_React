@@ -41,14 +41,14 @@ const SeekerLogin: React.FC = () => {
         const checked = (e.target as HTMLInputElement).checked;
         const fieldName = type === 'radio' ? name : id;
 
-        setFormData((prev: any) => ({
+        setFormData((prev) => ({
             ...prev,
             [fieldName]: type === 'checkbox' ? checked : value
         }));
 
         // Clear error when user changes field
         if (errors[fieldName]) {
-            setErrors((prev: Record<string, string>) => {
+            setErrors((prev) => {
                 const newErrors = { ...prev };
                 delete newErrors[fieldName];
                 return newErrors;
@@ -161,14 +161,6 @@ const SeekerLogin: React.FC = () => {
         }
     };
 
-    const ValidationCloud = ({ message }: { message: string }) => (
-        <div className="absolute bottom-full left-0 mb-4 w-full p-4 bg-primary text-white text-xs rounded-3xl shadow-2xl animate-bounce z-20">
-            <div className="relative">
-                <p className="font-bold leading-relaxed">{message}</p>
-                <div className="absolute -bottom-6 left-6 w-4 h-4 bg-primary rotate-45 transform"></div>
-            </div>
-        </div>
-    );
 
     return (
         <div className="min-h-screen bg-bg text-text selection:bg-primary/30">
@@ -553,5 +545,14 @@ const SeekerLogin: React.FC = () => {
         </div>
     );
 };
+
+const ValidationCloud = ({ message }: { message: string }) => (
+    <div className="absolute bottom-full left-0 mb-4 w-full p-4 bg-primary text-white text-xs rounded-3xl shadow-2xl animate-bounce z-20">
+        <div className="relative">
+            <p className="font-bold leading-relaxed">{message}</p>
+            <div className="absolute -bottom-6 left-6 w-4 h-4 bg-primary rotate-45 transform"></div>
+        </div>
+    </div>
+);
 
 export default SeekerLogin;

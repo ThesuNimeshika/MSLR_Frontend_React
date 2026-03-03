@@ -4,7 +4,6 @@ import Footer from '../../Components/Footer';
 import SearchBar from '../../Components/SearchBar';
 import JobCard from '../../Components/JobCard';
 import CategoryCard from '../../Components/CategoryCard';
-import CompanyCard from '../../Components/CompanyCard';
 import '../../css/LandingPage.css';
 
 const LandingPage: React.FC = () => {
@@ -28,15 +27,6 @@ const LandingPage: React.FC = () => {
         { title: 'Marketing', count: '540', icon: '📢', color: '#8b5cf6' },
     ];
 
-    const companies = [
-        { name: 'Google', jobs: 45, logo: 'G' },
-        { name: 'Amazon', jobs: 32, logo: 'A' },
-        { name: 'Microsoft', jobs: 28, logo: 'M' },
-        { name: 'Netfix', jobs: 12, logo: 'N' },
-        { name: 'SpaceX', jobs: 8, logo: 'X' },
-        { name: 'Meta', jobs: 19, logo: '∞' },
-    ];
-
     const filteredJobs = filter === 'Recent' ? featuredJobs.filter(j => j.isRecent) : featuredJobs;
 
     return (
@@ -44,55 +34,59 @@ const LandingPage: React.FC = () => {
             <Header />
 
             {/* Hero Section */}
-            <section className="relative flex items-center justify-center pt-32 pb-12 px-5 z-20">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-primary/10 via-transparent to-transparent blur-3xl opacity-50 pointer-events-none"></div>
-                <div className="absolute -top-20 -left-20 w-80 h-80 bg-primary/20 rounded-full blur-[100px] pointer-events-none"></div>
-                <div className="absolute bottom-20 -right-20 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+            <section className="hero-section z-20">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-primary/10 via-transparent to-transparent blur-[120px] opacity-40 pointer-events-none z-10"></div>
 
-                <div className="w-full text-center relative z-10">
-                    <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-white/5 border border-white/10 backdrop-blur-md animate-in fade-in slide-in-from-top-4 duration-500">
-                        <span className="text-primary font-bold text-xs tracking-widest uppercase">✨ The Future of Recruitment is Here</span>
+                <div className="max-w-7xl w-full text-center relative z-20 mx-auto px-5">
+                    <div className="inline-flex items-center px-4 py-2 mb-6 rounded-full bg-white/5 border border-white/10 backdrop-blur-2xl animate-in fade-in slide-in-from-top-4 duration-1000">
+                        <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse mr-2.5"></span>
+                        <span className="text-primary font-bold text-[10px] tracking-[0.3em] uppercase">The Future of Recruitment is Here</span>
                     </div>
-                    <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold mb-6 tracking-tight leading-[1.1] animate-in fade-in slide-in-from-bottom-8 duration-700 text-text">
-                        Find Your <span className="text-primary italic">Dream</span> Job<br />
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-indigo-400 to-indigo-600">With Next-Gen Search</span>
+                    <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-6 tracking-tighter leading-[0.9] animate-in fade-in slide-in-from-bottom-8 duration-800 text-text">
+                        We connect <span className="text-primary italic font-serif">Talent </span> with organizations, that<br />
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-indigo-400 to-indigo-600">Demand Excellence discreetly</span> with trust
                     </h1>
-                    <p className="text-text-dim text-base sm:text-lg md:text-xl mb-12 animate-in fade-in slide-in-from-bottom-12 duration-1000 px-4">
-                        Connecting talented individuals with world-class companies. Express your career journey with MSL Recruitment across the globe.
+                    <p className="max-w-3xl mx-auto text-text text-lg sm:text-xl md:text-2xl mb-12 animate-in fade-in slide-in-from-bottom-12 duration-1000 leading-relaxed font-semibold">
+                        Connecting global talent with world-class opportunities. <br className="hidden md:block" /> Your career journey starts here with MSL Recruitment.
                     </p>
-                    <div className="animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300 w-full px-0">
+                    <div className="search-bar-hero-container animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300">
                         <SearchBar />
                     </div>
                 </div>
             </section>
 
             {/* Featured Jobs */}
-            <section className="py-12 px-5 w-full">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-                    <div>
-                        <span className="text-primary font-bold text-sm tracking-widest uppercase mb-2 block">Opportunity</span>
-                        <h2 className="text-4xl font-bold text-text">Featured Jobs</h2>
+            <section className="featured-jobs-section w-full">
+                <div className="featured-jobs-container">
+                    <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+                        <div>
+                            <div className="flex items-center space-x-3 mb-3">
+                                <div className="h-1 w-12 bg-primary rounded-full"></div>
+                                <span className="text-primary font-bold text-sm tracking-[0.2em] uppercase">Opportunity</span>
+                            </div>
+                            <h2 className="text-5xl md:text-6xl font-bold text-text tracking-tight">Featured Jobs</h2>
+                        </div>
+                        <div className="flex bg-white/5 p-1 rounded-xl border border-glass-border">
+                            <button
+                                onClick={() => setFilter('All')}
+                                className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${filter === 'All' ? 'bg-primary text-white shadow-lg' : 'text-text-dim hover:text-white'}`}
+                            >
+                                All Jobs
+                            </button>
+                            <button
+                                onClick={() => setFilter('Recent')}
+                                className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${filter === 'Recent' ? 'bg-primary text-white shadow-lg' : 'text-text-dim hover:text-white'}`}
+                            >
+                                Recent
+                            </button>
+                        </div>
                     </div>
-                    <div className="flex bg-white/5 p-1 rounded-xl border border-glass-border">
-                        <button
-                            onClick={() => setFilter('All')}
-                            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${filter === 'All' ? 'bg-primary text-white shadow-lg' : 'text-text-dim hover:text-white'}`}
-                        >
-                            All Jobs
-                        </button>
-                        <button
-                            onClick={() => setFilter('Recent')}
-                            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${filter === 'Recent' ? 'bg-primary text-white shadow-lg' : 'text-text-dim hover:text-white'}`}
-                        >
-                            Recent
-                        </button>
-                    </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredJobs.map((job, idx) => (
-                        <JobCard key={idx} {...job} />
-                    ))}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {filteredJobs.map((job, idx) => (
+                            <JobCard key={idx} {...job} />
+                        ))}
+                    </div>
                 </div>
             </section>
 

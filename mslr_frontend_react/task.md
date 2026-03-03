@@ -1,9 +1,8 @@
-# Task: Refine Input Borders for Light Mode
+# Task: Fix Lint and Build Errors
 
-- [x] Create implementation plan
-- [x] Check `ThemeContext.tsx` for light mode detection logic
-- [x] Update `SeekerLogin.tsx` input borders for light mode
-- [x] Update `OverseasRegistration.tsx` input borders for light mode
-- [/] Fix lint errors in `SeekerLogin.tsx` [ ]
+- [ ] Fix lint errors in `SeekerLogin.tsx` [/]
+- [ ] Fix lint errors in `OverseasRegistration.tsx` [ ]
+- [ ] Fix unused variables in `LandingPage.tsx` [ ]
 - [ ] Verify styling changes in both themes
 - [ ] Update walkthrough
+- [ ] Rerun project (npm run dev)

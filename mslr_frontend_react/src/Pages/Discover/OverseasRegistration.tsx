@@ -90,14 +90,6 @@ const OverseasRegistration: React.FC = () => {
         }
     };
 
-    const ValidationCloud = ({ message }: { message: string }) => (
-        <div className="absolute bottom-full left-0 mb-4 w-full p-4 bg-primary text-white text-xs rounded-3xl shadow-2xl animate-bounce z-20">
-            <div className="relative">
-                <p className="font-bold leading-relaxed">{message}</p>
-                <div className="absolute -bottom-6 left-6 w-4 h-4 bg-primary rotate-45 transform"></div>
-            </div>
-        </div>
-    );
 
     return (
         <div className="min-h-screen bg-bg text-text selection:bg-primary/30">
@@ -303,5 +295,14 @@ const OverseasRegistration: React.FC = () => {
         </div>
     );
 };
+
+const ValidationCloud = ({ message }: { message: string }) => (
+    <div className="absolute bottom-full left-0 mb-4 w-full p-4 bg-primary text-white text-xs rounded-3xl shadow-2xl animate-bounce z-20">
+        <div className="relative">
+            <p className="font-bold leading-relaxed">{message}</p>
+            <div className="absolute -bottom-6 left-6 w-4 h-4 bg-primary rotate-45 transform"></div>
+        </div>
+    </div>
+);
 
 export default OverseasRegistration;
