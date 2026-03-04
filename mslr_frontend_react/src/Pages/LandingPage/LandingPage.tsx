@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../../Components/Header';
 import Footer from '../../Components/Footer';
 import SearchBar from '../../Components/SearchBar';
@@ -6,17 +6,88 @@ import JobCard from '../../Components/JobCard';
 import CategoryCard from '../../Components/CategoryCard';
 import '../../css/LandingPage.css';
 
+interface ApiJob {
+    jobId: number;
+    jobTitle: string;
+    jobDescription: string;
+    salaryRange: string | null;
+    postedDate: string;
+    location?: { locationName: string };
+    sector?: { sectorName: string };
+}
+
+interface Job {
+    title: string;
+    company: string;
+    location: string;
+    type: string;
+    salary: string;
+    logo: string;
+    isRecent: boolean;
+}
+
+const API_URL = 'http://localhost:5194/api';
+
 const LandingPage: React.FC = () => {
     const [filter, setFilter] = useState<'All' | 'Recent'>('All');
+    const [jobs, setJobs] = useState<Job[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [hasError, setHasError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string>('');
 
-    const featuredJobs = [
-        { title: 'Senior Product Designer', company: 'Linear', location: 'Remote', type: 'Full-time', salary: '$140k - $180k', logo: '🎨', isRecent: true },
-        { title: 'Frontend Engineer (React)', company: 'Vercel', location: 'San Francisco', type: 'Full-time', salary: '$160k - $200k', logo: '▲', isRecent: false },
-        { title: 'Lead Logistics Coordinator', company: 'Maersk', location: 'Colombo', type: 'Contract', salary: '$80k - $110k', logo: '🚢', isRecent: true },
-        { title: 'Backend Developer (Node.js)', company: 'Stripe', location: 'Remote', type: 'Full-time', salary: '$150k - $190k', logo: '💳', isRecent: false },
-        { title: 'Brand Identity Designer', company: 'Framer', location: 'Amsterdam', type: 'Part-time', salary: '$100k - $130k', logo: '✨', isRecent: true },
-        { title: 'DevOps Engineer', company: 'GitHub', location: 'Remote', type: 'Full-time', salary: '$170k - $210k', logo: '🐙', isRecent: false },
-    ];
+    const fetchJobs = async (params?: { title?: string; location?: string; category?: string }) => {
+        setIsLoading(true);
+        setHasError(false);
+        setErrorMessage('');
+        try {
+            let url = `${API_URL}/Jobs`;
+            if (params) {
+                const query = new URLSearchParams();
+                if (params.title) query.append('title', params.title);
+                if (params.location) query.append('location', params.location);
+                if (params.category) query.append('category', params.category);
+                url = `${API_URL}/Jobs/search?${query.toString()}`;
+            }
+
+            const response = await fetch(url);
+            if (response.ok) {
+                const data: ApiJob[] = await response.json();
+                const mappedJobs = data.map(j => ({
+                    title: j.jobTitle,
+                    company: 'MSLR Partner',
+                    location: j.location?.locationName || 'Remote',
+                    type: 'Full-time',
+                    salary: j.salaryRange || 'Competitive',
+                    logo: j.jobTitle.charAt(0).toUpperCase(),
+                    isRecent: new Date(j.postedDate).getTime() > Date.now() - (7 * 24 * 60 * 60 * 1000)
+                }));
+                setJobs(mappedJobs);
+            } else {
+                const err = await response.json().catch(() => ({}));
+                setHasError(true);
+                setErrorMessage(err.details || 'Unable to connect to the database.');
+            }
+        } catch (error) {
+            console.error("Error fetching jobs:", error);
+            setHasError(true);
+            setErrorMessage('Backend is unreachable. Ensure it is running on port 5194.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchJobs();
+    }, []);
+
+    const handleSearch = (params: { title: string; locations: string[]; categories: string[] }) => {
+        // For simplicity in this demo, we use the first selected item for filtering
+        fetchJobs({
+            title: params.title,
+            location: params.locations[0],
+            category: params.categories[0]
+        });
+    };
 
     const categories = [
         { title: 'Technology', count: '1,240', icon: '💻', color: '#6366f1' },
@@ -27,7 +98,13 @@ const LandingPage: React.FC = () => {
         { title: 'Marketing', count: '540', icon: '📢', color: '#8b5cf6' },
     ];
 
-    const filteredJobs = filter === 'Recent' ? featuredJobs.filter(j => j.isRecent) : featuredJobs;
+    const filteredJobs = filter === 'Recent' ? jobs.filter(j => j.isRecent) : jobs;
+
+    const displayJobs = filteredJobs.length > 0 || !isLoading ? filteredJobs : [
+        { title: 'Senior Product Designer', company: 'Linear', location: 'Remote', type: 'Full-time', salary: '$140k - $180k', logo: '🎨', isRecent: true },
+        { title: 'Frontend Engineer (React)', company: 'Vercel', location: 'San Francisco', type: 'Full-time', salary: '$160k - $200k', logo: '▲', isRecent: false },
+        { title: 'Lead Logistics Coordinator', company: 'Maersk', location: 'Colombo', type: 'Contract', salary: '$80k - $110k', logo: '🚢', isRecent: true },
+    ];
 
     return (
         <div className="landing-page min-h-screen bg-bg text-text selection:bg-primary/30">
@@ -50,7 +127,7 @@ const LandingPage: React.FC = () => {
                         Connecting global talent with world-class opportunities. <br className="hidden md:block" /> Your career journey starts here with MSL Recruitment.
                     </p>
                     <div className="search-bar-hero-container animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300">
-                        <SearchBar />
+                        <SearchBar onSearch={handleSearch} />
                     </div>
                 </div>
             </section>
@@ -64,7 +141,18 @@ const LandingPage: React.FC = () => {
                                 <div className="h-1 w-12 bg-primary rounded-full"></div>
                                 <span className="text-primary font-bold text-sm tracking-[0.2em] uppercase">Opportunity</span>
                             </div>
-                            <h2 className="text-5xl md:text-6xl font-bold text-text tracking-tight">Featured Jobs</h2>
+                            <h2 className="text-5xl md:text-6xl font-bold text-text tracking-tight">
+                                {isLoading ? 'Searching...' : filteredJobs.length > 0 ? 'Search Results' : 'Featured Jobs'}
+                            </h2>
+                            {hasError && (
+                                <div className="text-red-400 mt-4 p-4 bg-red-400/10 rounded-2xl border border-white/5 max-w-2xl">
+                                    <div className="font-bold flex items-center mb-1 text-sm">
+                                        <span className="mr-2 text-base">⚠️</span>
+                                        Connection Error
+                                    </div>
+                                    <p className="text-xs opacity-70 leading-relaxed italic">{errorMessage}</p>
+                                </div>
+                            )}
                         </div>
                         <div className="flex bg-white/5 p-1 rounded-xl border border-glass-border">
                             <button
@@ -83,9 +171,21 @@ const LandingPage: React.FC = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {filteredJobs.map((job, idx) => (
-                            <JobCard key={idx} {...job} />
-                        ))}
+                        {isLoading ? (
+                            Array.from({ length: 3 }).map((_, i) => (
+                                <div key={i} className="h-64 glass rounded-3xl animate-pulse"></div>
+                            ))
+                        ) : displayJobs.length > 0 ? (
+                            displayJobs.map((job, idx) => (
+                                <JobCard key={idx} {...job} />
+                            ))
+                        ) : (
+                            <div className="col-span-full text-center py-20">
+                                <span className="text-6xl mb-4 block">🔍</span>
+                                <h3 className="text-2xl font-bold text-text mb-2">No jobs found</h3>
+                                <p className="text-text-dim">Try adjusting your search filters or browse other categories.</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </section>

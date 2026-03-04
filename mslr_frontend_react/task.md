@@ -1,8 +1,9 @@
-# Task: Project Optimization and Fixes
+# Task: Debug Connection & Data Visibility
 
-- [x] Diagnose project run failure (root directory issue confirmed)
-- [x] Fix lint errors in `SearchBar.tsx` and `SeekerLogin.tsx`
-- [x] Fix Hero Section responsiveness on laptop screens
-- [x] Implement active navigation states for Header buttons
-- [x] Verified build and lint (0 errors)
-- [x] Documented changes in `walkthrough.md`
+- [x] Disable HTTPS redirection for local dev
+- [x] Relax CORS policy for better local debugging
+- [x] Add Database connection logging to `Program.cs`
+- [x] Resolve Oracle column mapping if necessary
+- [x] Create a "Check Connection" API endpoint
+- [x] Update walkthrough with troubleshooting steps
+- [x] Implement frontend error states and API_URL configuration

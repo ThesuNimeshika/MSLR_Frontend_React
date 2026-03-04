@@ -14,8 +14,21 @@ I have identified and resolved the issues preventing the project from running co
 
 ### 3. Active Navigation States
 - **Header Buttons**: Added `useLocation` to `Header.tsx` to detect the current page.
-- **Visual Feedback**: The "Post a Job", "Discover ME", and "Candidate Portal" buttons now highlight when you are on their respective pages (Recruiter Guide, Discover ME, or Login).
-- **Home Link**: The "HOME" link also shows an active underline when on the landing page.
+- **Visual Feedback**: Buttons highlight when active.
+
+### 4. Frontend-Backend Integration
+- **SearchBar**: Now fetches real-time Categories (Sectors) and Locations from the Oracle Database via the new C# API.
+- **Dynamic Grouping**: Flat database sectors are automatically grouped into hierarchical UI categories (e.g., IT -> Software Development).
+- **Featured Jobs**: The landing page now displays jobs directly from the `JOBS` table in the database.
+- **Auto-Fallback**: If the API is not yet running, the UI gracefully falls back to descriptive sample data to ensure a smooth experience.
+
+## Backend Technical Details
+- **Tech Stack**: ASP.NET Core Web API with Oracle Entity Framework Core.
+- **Endpoints**:
+  - `GET /api/Sectors`: Fetches sectoral classification.
+  - `GET /api/Locations`: Fetches active job locations.
+  - `GET /api/Jobs`: Fetches featured job listings.
+- **Connection**: Managed via `appsettings.json` using the provided Oracle connection string.
 
 ## How to Run the Project
 
