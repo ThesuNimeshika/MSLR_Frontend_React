@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 
 const Header: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { theme, toggleTheme } = useTheme();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const isActive = (path: string) => location.pathname === path;
 
     return (
         <header className="fixed top-0 left-0 w-full z-50 glass py-5 border-b border-white/5">
@@ -23,7 +26,12 @@ const Header: React.FC = () => {
                 </div>
 
                 <nav className="hidden lg:flex items-center space-x-10 text-sm font-bold tracking-widest">
-                    <Link to="/" className="text-primary relative after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-0.5 after:bg-primary transition-all">HOME</Link>
+                    <Link
+                        to="/"
+                        className={`${isActive('/') ? 'text-primary' : 'text-text-dim hover:text-text'} relative after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-0.5 after:bg-primary transition-all ${isActive('/') ? 'after:opacity-100' : 'after:opacity-0 hover:after:opacity-100'}`}
+                    >
+                        HOME
+                    </Link>
                     <a href="#" className="text-text-dim hover:text-text transition-all hover:-translate-y-0.5">JOBS</a>
                     <a href="#" className="text-text-dim hover:text-text transition-all hover:-translate-y-0.5">RESOURCES</a>
                     <a href="#" className="text-text-dim hover:text-text transition-all hover:-translate-y-0.5">CONTACT</a>
@@ -40,19 +48,19 @@ const Header: React.FC = () => {
                     <div className="flex items-center space-x-2">
                         <button
                             onClick={() => navigate('/recruiter-guide')}
-                            className="px-5 py-3 text-sm font-bold text-text-dim hover:text-text transition-all rounded-xl hover:bg-white/5 cursor-pointer"
+                            className={`px-5 py-3 text-sm font-bold transition-all rounded-xl hover:bg-white/5 cursor-pointer ${isActive('/recruiter-guide') ? 'text-primary bg-primary/10 border border-primary/20 shadow-lg shadow-primary/5' : 'text-text-dim hover:text-text'}`}
                         >
                             Post a Job
                         </button>
                         <button
                             onClick={() => navigate('/discover-me')}
-                            className="px-6 py-3 text-sm font-bold text-text hover:text-primary transition-all rounded-xl hover:bg-white/5"
+                            className={`px-6 py-3 text-sm font-bold transition-all rounded-xl hover:bg-white/5 ${isActive('/discover-me') ? 'text-primary bg-primary/10 border border-primary/20 shadow-lg shadow-primary/5' : 'text-text hover:text-primary'}`}
                         >
                             Discover ME
                         </button>
                         <button
                             onClick={() => navigate('/login')}
-                            className="px-8 py-3.5 bg-primary hover:bg-indigo-500 text-white text-sm font-black rounded-2xl shadow-2xl shadow-primary/40 transition-all transform hover:-translate-y-1 active:translate-y-0 hover:scale-[1.02]"
+                            className={`px-8 py-3.5 text-sm font-black rounded-2xl shadow-2xl transition-all transform hover:-translate-y-1 active:translate-y-0 hover:scale-[1.02] ${isActive('/login') ? 'bg-indigo-600 text-white shadow-indigo-500/40 ring-2 ring-primary/30' : 'bg-primary hover:bg-indigo-500 text-white shadow-primary/40'}`}
                         >
                             Candidate Portal
                         </button>

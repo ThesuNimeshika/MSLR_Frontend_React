@@ -12,6 +12,11 @@ I have identified and resolved the issues preventing the project from running co
 - Ran `npm run lint` and confirmed that there are no remaining errors.
 - Ran `npm run build` and confirmed that the project builds successfully.
 
+### 3. Active Navigation States
+- **Header Buttons**: Added `useLocation` to `Header.tsx` to detect the current page.
+- **Visual Feedback**: The "Post a Job", "Discover ME", and "Candidate Portal" buttons now highlight when you are on their respective pages (Recruiter Guide, Discover ME, or Login).
+- **Home Link**: The "HOME" link also shows an active underline when on the landing page.
+
 ## How to Run the Project
 
 The most likely reason the terminal was not running the project is that you were in the root directory. The React project is located in the `mslr_frontend_react` subdirectory.
