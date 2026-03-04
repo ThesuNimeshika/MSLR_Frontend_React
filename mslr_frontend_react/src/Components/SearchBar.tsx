@@ -95,8 +95,8 @@ const SearchBar: React.FC = () => {
         }
     };
 
-    const toggleExpand = (id: string, e: React.MouseEvent) => {
-        e.stopPropagation();
+    const toggleExpand = (id: string, e?: React.MouseEvent) => {
+        e?.stopPropagation();
         if (expandedCategories.includes(id)) {
             setExpandedCategories(expandedCategories.filter(item => item !== id));
         } else {
@@ -170,7 +170,7 @@ const SearchBar: React.FC = () => {
                                 <div key={cat.id} className="mb-1">
                                     <div
                                         className={`flex items-center px-3 py-2.5 hover:bg-white/5 rounded-lg cursor-pointer transition-all group ${expandedCategories.includes(cat.id) ? 'bg-white/5' : ''}`}
-                                        onClick={() => toggleExpand(cat.id, { stopPropagation: () => { } } as any)}
+                                        onClick={() => toggleExpand(cat.id)}
                                     >
                                         <div
                                             className={`w-4 h-4 rounded border flex items-center justify-center mr-3 transition-all ${isCategorySelected(cat.id) ? 'bg-primary border-primary' : 'border-white/20'}`}

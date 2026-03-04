@@ -1,27 +1,26 @@
-# Implementation Plan - Fix Lint and Build Errors
+# Implementation Plan - Fix Hero Section Responsiveness (Laptop)
 
-Fix "components created during render" violations, unused variables, and explicit `any` types to allow the project to build and run successfully.
+Address the visibility of the "The Future of Recruitment is Here" tag and general hero content layout on laptop screens (short viewports).
 
 ## Proposed Changes
 
-### [Pages]
+### [Landing Page]
+
+#### [MODIFY] [LandingPage.css](file:///d:/Thesu/MSLR_Frontend_React/mslr_frontend_react/src/css/LandingPage.css)
+- Change `.hero-section` height from fixed `100vh` to `min-height: 100vh`.
+- Increase `padding-top` for laptop viewports and above to clear the header.
+- Add media queries to adjust font sizes and vertical spacing for viewports specifically in the laptop range (e.g., height < 800px).
+- Use `flex-start` instead of `center` for vertical alignment on smaller heights to ensure the top content is always visible.
 
 #### [MODIFY] [LandingPage.tsx](file:///d:/Thesu/MSLR_Frontend_React/mslr_frontend_react/src/Pages/LandingPage/LandingPage.tsx)
-- Remove unused `CompanyCard` import.
-- Remove unused `companies` constant.
-
-#### [MODIFY] [SeekerLogin.tsx](file:///d:/Thesu/MSLR_Frontend_React/mslr_frontend_react/src/Pages/Auth/SeekerLogin.tsx)
-- Move `ValidationCloud` component definition outside of `SeekerLogin` component.
-- Replace `any` types in `setFormData` and `setErrors` with proper types or inferred types.
-
-#### [MODIFY] [OverseasRegistration.tsx](file:///d:/Thesu/MSLR_Frontend_React/mslr_frontend_react/src/Pages/Discover/OverseasRegistration.tsx)
-- Move `ValidationCloud` component definition outside of `OverseasRegistration` component.
+- No changes needed to the TSX structure, as the issue is purely CSS-driven.
 
 ## Verification Plan
 
 ### Automated Tests
-- Run `npm run lint` to verify all lint errors are resolved.
-- Run `npm run build` to verify the project builds successfully.
+- None.
 
 ### Manual Verification
-- Run `npm run dev` and verify that the Landing Page, Login Page, and Overseas Registration page load correctly.
+- Verify on 1440x900 and 1366x768 resolutions.
+- Check that the "The Future of Recruitment is Here" tag is visible below the header.
+- Ensure the SearchBar is fully accessible and not pushed off-screen.

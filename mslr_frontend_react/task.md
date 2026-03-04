@@ -1,8 +1,6 @@
-# Task: Fix Lint and Build Errors
+# Task: Fix Hero Section Responsiveness
 
-- [ ] Fix lint errors in `SeekerLogin.tsx` [/]
-- [ ] Fix lint errors in `OverseasRegistration.tsx` [ ]
-- [ ] Fix unused variables in `LandingPage.tsx` [ ]
-- [ ] Verify styling changes in both themes
-- [ ] Update walkthrough
-- [ ] Rerun project (npm run dev)
+- [x] Analyze Hero Section layout and overlap with Header
+- [x] Adjust `LandingPage.css` to increase top spacing or change alignment
+- [x] Verify visibility of "The Future of Recruitment is Here" tag on laptop resolutions
+- [ ] Update walkthrough [ ]

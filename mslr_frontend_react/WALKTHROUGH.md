@@ -1,19 +1,31 @@
-# Walkthrough - Light Mode Visibility Refinement
+# Walkthrough - Project Run and Lint Fixes
 
-I have updated the registration and login forms to ensure perfect visibility regardless of the active theme.
+I have identified and resolved the issues preventing the project from running correctly.
 
-## Visual Enhancements
+## Changes Made
 
-### 1. High-Contrast Light Mode Borders
-- **Black Borders**: All input fields, including custom dropdowns, now feature solid **black borders** when the application is in Light Mode.
-- **Default Visibility**: These borders are visible by default, ensuring candidates can easily see the fields without having to click on them first.
-- **Dynamic Switching**: The system automatically switches between the premium black borders (Light Mode) and the subtle glass-white borders (Dark Mode).
+### 1. Fixed Lint Errors
+- **SearchBar.tsx**: Fixed `no-explicit-any` by making the event parameter optional and removing the `as any` type cast.
+- **SeekerLogin.tsx**: Fixed `no-explicit-any` in the `setFormData` call by allowing TypeScript to infer the type from the state.
 
-### 2. Consistent User Experience
-- **Error States**: Maintained the vibrant **red borders** for validation errors across both themes for immediate feedback.
-- **Premium Aesthetics**: Kept the same glassmorphism background and smooth transitions to ensure the portal remains visually stunning.
+### 2. Verified Build and Lint
+- Ran `npm run lint` and confirmed that there are no remaining errors.
+- Ran `npm run build` and confirmed that the project builds successfully.
 
-## Verification
-- Toggled the portal to **Light Mode**: Verified all inputs in Login, Signup, and Overseas Registration have crisp black borders.
-- Toggled to **Dark Mode**: Confirmed the borders revert to the elegant semi-transparent white.
-- Tested validation: Confirmed red error borders correctly override the default border colors in both themes.
+## How to Run the Project
+
+The most likely reason the terminal was not running the project is that you were in the root directory. The React project is located in the `mslr_frontend_react` subdirectory.
+
+To run the project:
+1. Open your terminal.
+2. Navigate to the project directory:
+   ```bash
+   cd mslr_frontend_react
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+## Note on Node.js Version
+The project uses Vite 7, which requires Node.js **20.19+** or **22.12+**. Your current version is **20.14.0**. While the project currently runs, you may encounter issues in the future. It is recommended to upgrade your Node.js version.

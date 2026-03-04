@@ -385,7 +385,7 @@ const SeekerLogin: React.FC = () => {
                                                                 key={d}
                                                                 className={`px-4 py-3 hover:bg-white/5 rounded-xl cursor-pointer transition-all ${formData.district === d ? 'bg-primary/10 border-l-4 border-primary' : ''}`}
                                                                 onClick={() => {
-                                                                    setFormData((prev: any) => ({ ...prev, district: d }));
+                                                                    setFormData((prev) => ({ ...prev, district: d }));
                                                                     setShowDistrictDropdown(false);
                                                                     setErrors((prev: Record<string, string>) => {
                                                                         const newErrors = { ...prev };
