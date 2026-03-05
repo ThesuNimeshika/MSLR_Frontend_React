@@ -22,7 +22,7 @@ namespace MslrBackend.Controllers
                 db.openConnection();
 
                 string sql = @"
-                    SELECT j.JOB_ID, j.JOB_TITLE, c.FULL_NAME as COMPANY_NAME, j.JOB_DESCRIPTION, j.POSTED_DATE, j.APPLICATION_DEADLINE,
+                    SELECT j.JOB_ID, j.JOB_TITLE, c.FULL_NAME as COMPANY_NAME, j.JOB_DESCRIPTION, j.POSTED_DATE, j.APPLICATION_DEADLINE, j.SALARY_RANGE,
                            s.SECTOR_ID, s.SECTOR_NAME, s.SUB_SECTOR_NAME,
                            l.LOCATION_ID, l.LOCATION_NAME
                     FROM JOBS j
@@ -64,7 +64,7 @@ namespace MslrBackend.Controllers
                 db.openConnection();
 
                 string sql = @"
-                    SELECT j.JOB_ID, j.JOB_TITLE, c.FULL_NAME as COMPANY_NAME, j.JOB_DESCRIPTION, j.POSTED_DATE, j.APPLICATION_DEADLINE,
+                    SELECT j.JOB_ID, j.JOB_TITLE, c.FULL_NAME as COMPANY_NAME, j.JOB_DESCRIPTION, j.POSTED_DATE, j.APPLICATION_DEADLINE, j.SALARY_RANGE,
                            s.SECTOR_ID, s.SECTOR_NAME, s.SUB_SECTOR_NAME,
                            l.LOCATION_ID, l.LOCATION_NAME
                     FROM JOBS j
@@ -113,16 +113,17 @@ namespace MslrBackend.Controllers
                 JobDescription = reader.IsDBNull(3) ? null : reader.GetString(3),
                 PostedDate = reader.GetDateTime(4),
                 ApplicationDeadline = reader.IsDBNull(5) ? null : reader.GetDateTime(5),
-                SectorId = reader.IsDBNull(6) ? 0 : reader.GetDecimal(6),
-                Sector = reader.IsDBNull(6) ? null : new Sector { 
-                    SectorId = reader.GetDecimal(6), 
-                    SectorName = reader.GetString(7),
-                    SubSectorName = reader.IsDBNull(8) ? null : reader.GetString(8)
+                SalaryRange = reader.IsDBNull(6) ? null : reader.GetString(6),
+                SectorId = reader.IsDBNull(7) ? 0 : reader.GetDecimal(7),
+                Sector = reader.IsDBNull(7) ? null : new Sector { 
+                    SectorId = reader.GetDecimal(7), 
+                    SectorName = reader.GetString(8),
+                    SubSectorName = reader.IsDBNull(9) ? null : reader.GetString(9)
                 },
-                LocationId = reader.IsDBNull(9) ? 0 : reader.GetDecimal(9),
-                Location = reader.IsDBNull(9) ? null : new Location { 
-                    LocationId = reader.GetDecimal(9), 
-                    LocationName = reader.GetString(10) 
+                LocationId = reader.IsDBNull(10) ? 0 : reader.GetDecimal(10),
+                Location = reader.IsDBNull(10) ? null : new Location { 
+                    LocationId = reader.GetDecimal(10), 
+                    LocationName = reader.GetString(11) 
                 }
             };
         }

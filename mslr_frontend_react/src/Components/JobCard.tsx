@@ -8,9 +8,10 @@ interface JobCardProps {
     salary: string;
     logo: string;
     isRecent?: boolean;
+    deadline?: string | null;
 }
 
-const JobCard: React.FC<JobCardProps> = ({ title, company, location, type, salary, logo, isRecent }) => {
+const JobCard: React.FC<JobCardProps> = ({ title, company, location, type, salary, logo, isRecent, deadline }) => {
     return (
         <div className="glass p-6 rounded-2xl hover:border-primary/50 transition-all group cursor-pointer relative overflow-hidden bg-white/50 dark:bg-card-bg shadow-sm hover:shadow-xl hover:-translate-y-1">
             {isRecent && (
@@ -43,7 +44,9 @@ const JobCard: React.FC<JobCardProps> = ({ title, company, location, type, salar
                 <button className="text-primary text-sm font-bold opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 flex items-center gap-1">
                     Apply Now <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </button>
-                <span className="text-[10px] text-text-dim font-medium italic">2 hours ago</span>
+                <span className="text-[10px] text-text-dim font-medium italic">
+                    {deadline ? `Closes: ${new Date(deadline).toLocaleDateString()}` : 'No deadline'}
+                </span>
             </div>
 
             {/* Subtle light mode glow */}

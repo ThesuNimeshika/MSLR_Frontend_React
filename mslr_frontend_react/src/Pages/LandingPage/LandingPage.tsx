@@ -12,6 +12,7 @@ interface ApiJob {
     jobDescription: string;
     salaryRange: string | null;
     postedDate: string;
+    applicationDeadline: string | null;
     location?: { locationName: string };
     sector?: { sectorName: string };
 }
@@ -50,6 +51,7 @@ interface Job {
     salary: string;
     logo: string;
     isRecent: boolean;
+    deadline?: string | null;
 }
 
 const API_URL = 'http://localhost:5194/api';
@@ -86,7 +88,8 @@ const LandingPage: React.FC = () => {
                     type: 'Full-time',
                     salary: j.salaryRange || 'Competitive',
                     logo: j.jobTitle.charAt(0).toUpperCase(),
-                    isRecent: new Date(j.postedDate).getTime() > Date.now() - (7 * 24 * 60 * 60 * 1000)
+                    isRecent: new Date(j.postedDate).getTime() > Date.now() - (7 * 24 * 60 * 60 * 1000),
+                    deadline: j.applicationDeadline
                 }));
                 setJobs(mappedJobs);
             } else {
@@ -145,9 +148,9 @@ const LandingPage: React.FC = () => {
     const filteredJobs = filter === 'Recent' ? jobs.filter(j => j.isRecent) : jobs;
 
     const displayJobs = filteredJobs.length > 0 || !isLoading ? filteredJobs : [
-        { title: 'Senior Product Designer', company: 'Linear', location: 'Remote', type: 'Full-time', salary: '$140k - $180k', logo: '🎨', isRecent: true },
-        { title: 'Frontend Engineer (React)', company: 'Vercel', location: 'San Francisco', type: 'Full-time', salary: '$160k - $200k', logo: '▲', isRecent: false },
-        { title: 'Lead Logistics Coordinator', company: 'Maersk', location: 'Colombo', type: 'Contract', salary: '$80k - $110k', logo: '🚢', isRecent: true },
+        { title: 'Senior Product Designer', company: 'Linear', location: 'Remote', type: 'Full-time', salary: '$140k - $180k', logo: '🎨', isRecent: true, deadline: '2026-04-01' },
+        { title: 'Frontend Engineer (React)', company: 'Vercel', location: 'San Francisco', type: 'Full-time', salary: '$160k - $200k', logo: '▲', isRecent: false, deadline: null },
+        { title: 'Lead Logistics Coordinator', company: 'Maersk', location: 'Colombo', type: 'Contract', salary: '$80k - $110k', logo: '🚢', isRecent: true, deadline: '2026-03-15' },
     ];
 
     return (
