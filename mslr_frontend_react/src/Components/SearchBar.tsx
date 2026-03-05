@@ -229,9 +229,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                                                 {isCategorySelected(cat.id) && <span className="text-[10px] text-white">✓</span>}
                                             </div>
                                             <span className="mr-2 text-base">{cat.icon}</span>
-                                            <span className={`text-sm flex-1 text-left ${isCategorySelected(cat.id) ? 'text-text font-bold' : 'text-text-dim'}`}>{cat.label}</span>
+                                            <span className={`text-sm flex-1 text-left transition-colors group-hover:text-indigo-400 ${isCategorySelected(cat.id) ? 'text-indigo-400 font-bold' : 'text-text-dim'}`}>{cat.label}</span>
                                             {cat.subcategories.length > 0 && (
-                                                <span className="text-[10px] text-text-dim ml-2 transition-transform duration-300" style={{ transform: expandedCategories.includes(cat.id) ? 'rotate(180deg)' : 'rotate(0)' }}>▼</span>
+                                                <span className="text-[10px] text-text-dim ml-2 transition-transform duration-300 group-hover:text-indigo-400" style={{ transform: expandedCategories.includes(cat.id) ? 'rotate(180deg)' : 'rotate(0)' }}>▼</span>
                                             )}
                                         </div>
 
@@ -246,7 +246,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                                                         <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center mr-3 transition-all ${isSubSelected(sub) ? 'bg-primary border-primary' : 'border-white/20'}`}>
                                                             {isSubSelected(sub) && <span className="text-[8px] text-white">✓</span>}
                                                         </div>
-                                                        <span className={`text-xs ${isSubSelected(sub) ? 'text-text font-medium' : 'text-text-dim'}`}>{sub}</span>
+                                                        <span className={`text-xs transition-colors group-hover:text-indigo-400 ${isSubSelected(sub) ? 'text-indigo-400 font-medium' : 'text-text-dim hover:text-indigo-400'}`}>{sub}</span>
                                                     </div>
                                                 ))}
                                             </div>
@@ -291,7 +291,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                                             }`}>
                                             {selectedLocations.includes(loc) && <span className="text-[10px] text-white">✓</span>}
                                         </div>
-                                        <span className="text-sm text-text-dim hover:text-white">{loc}</span>
+                                        <span className="text-sm text-text-dim transition-colors group-hover:text-indigo-400 hover:text-indigo-400">{loc}</span>
                                     </div>
                                 ))
                             )}
