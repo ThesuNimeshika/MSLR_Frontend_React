@@ -220,7 +220,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                                             onClick={() => toggleExpand(cat.id)}
                                         >
                                             <div
-                                                className={`w-4 h-4 rounded border flex items-center justify-center mr-3 transition-all ${isCategorySelected(cat.id) ? 'bg-primary border-primary' : 'border-white/20'}`}
+                                                className={`w-4 h-4 rounded border flex items-center justify-center mr-3 transition-all ${isCategorySelected(cat.id) ? 'bg-primary border-primary' : 'border-primary/50'}`}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleCategoryClick(cat.id, cat.subcategories);
@@ -243,7 +243,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                                                         className="flex items-center justify-start text-left px-3 py-2 hover:bg-white/5 rounded-lg cursor-pointer transition-colors"
                                                         onClick={() => toggleCategory(sub)}
                                                     >
-                                                        <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center mr-3 transition-all ${isSubSelected(sub) ? 'bg-primary border-primary' : 'border-white/20'}`}>
+                                                        <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center mr-3 transition-all ${isSubSelected(sub) ? 'bg-primary border-primary' : 'border-primary/50'}`}>
                                                             {isSubSelected(sub) && <span className="text-[8px] text-white">✓</span>}
                                                         </div>
                                                         <span className={`text-xs transition-colors group-hover:text-indigo-400 ${isSubSelected(sub) ? 'text-indigo-400 font-medium' : 'text-text-dim hover:text-indigo-400'}`}>{sub}</span>
@@ -287,7 +287,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                                             toggleLocation(loc);
                                         }}
                                     >
-                                        <div className={`w-4 h-4 rounded border flex items-center justify-center mr-3 transition-all ${selectedLocations.includes(loc) ? 'bg-primary border-primary' : 'border-white/20'
+                                        <div className={`w-4 h-4 rounded border flex items-center justify-center mr-3 transition-all ${selectedLocations.includes(loc) ? 'bg-primary border-primary' : 'border-primary/50'
                                             }`}>
                                             {selectedLocations.includes(loc) && <span className="text-[10px] text-white">✓</span>}
                                         </div>
