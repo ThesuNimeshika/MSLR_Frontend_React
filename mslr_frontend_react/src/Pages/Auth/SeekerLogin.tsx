@@ -11,7 +11,7 @@ const SeekerLogin: React.FC = () => {
     const [forgotStep, setForgotStep] = useState<'email' | 'reset'>('email');
     const [showOtpPopup, setShowOtpPopup] = useState(false);
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
-    const [showDistrictDropdown, setShowDistrictDropdown] = useState(false);
+    const [showFieldDropdown, setShowFieldDropdown] = useState(false);
 
     // Form States
     const [formData, setFormData] = useState({
@@ -21,20 +21,22 @@ const SeekerLogin: React.FC = () => {
         firstName: '',
         lastName: '',
         gender: '',
-        district: '',
+        seekField: '',
         receiveEmails: false
     });
     const [cvFile, setCvFile] = useState<File | null>(null);
     const [showTooltip, setShowTooltip] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
-    const districts = [
-        'Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo',
-        'Galle', 'Gampaha', 'Hambantota', 'Jaffna', 'Kalutara',
-        'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar',
-        'Matale', 'Matara', 'Moneragala', 'Mullaitivu', 'Nuwara Eliya',
-        'Polonnaruwa', 'Puttalam', 'Ratnapura', 'Trincomalee', 'Vavuniya'
+    const categories = [
+        { id: 'tech', label: 'Technology', icon: '💻' },
+        { id: 'logistics', label: 'Logistics', icon: '📦' },
+        { id: 'design', label: 'Design', icon: '🖋️' },
+        { id: 'finance', label: 'Finance', icon: '📊' },
+        { id: 'healthcare', label: 'Healthcare', icon: '🏥' },
+        { id: 'marketing', label: 'Marketing', icon: '📢' },
     ];
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { id, value, type, name } = e.target as HTMLInputElement;
@@ -109,7 +111,7 @@ const SeekerLogin: React.FC = () => {
             }
 
             if (!formData.gender) newErrors.gender = 'Please select your gender';
-            if (!formData.district) newErrors.district = 'Please select your home district';
+            if (!formData.seekField || formData.seekField === '') newErrors.seekField = 'Please select your home district';
         } else if (authView === 'forgot') {
             if (forgotStep === 'email') {
                 if (!formData.email) newErrors.email = 'Email address is required';
@@ -366,42 +368,46 @@ const SeekerLogin: React.FC = () => {
                                             </div>
                                         </div>
                                         <div className="relative">
-                                            <label className="block text-sm font-semibold mb-2 ml-1">Home District</label>
+                                            <label className="block text-sm font-semibold mb-2 ml-1">Seek Field</label>
                                             <div
-                                                className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.district ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text flex items-center justify-between cursor-pointer hover:border-primary/50 transition-all`}
-                                                onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
+                                                className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.seekField ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text flex items-center justify-between cursor-pointer hover:border-primary/50 transition-all`}
+                                                onClick={() => setShowFieldDropdown(!showFieldDropdown)}
                                             >
-                                                <span className={formData.district ? 'text-text' : 'text-text-dim/50'}>
-                                                    {formData.district || 'Select District'}
+                                                <span className={formData.seekField ? 'text-text' : 'text-text-dim/50'}>
+                                                    {formData.seekField ? (
+                                                        <span className="flex items-center gap-2">
+                                                            <span>{categories.find(c => c.id === formData.seekField)?.icon}</span>
+                                                            <span>{categories.find(c => c.id === formData.seekField)?.label}</span>
+                                                        </span>
+                                                    ) : 'Select Industry Field'}
                                                 </span>
-                                                <span className={`text-text-dim text-xs transition-transform duration-300 ${showDistrictDropdown ? 'rotate-180' : ''}`}>▼</span>
+                                                <span className={`text-text-dim text-xs transition-transform duration-300 ${showFieldDropdown ? 'rotate-180' : ''}`}>▼</span>
                                             </div>
 
-                                            {showDistrictDropdown && (
+                                            {showFieldDropdown && (
                                                 <div className="absolute top-full left-0 w-full mt-2 glass rounded-[1.5rem] border-white/10 overflow-hidden shadow-2xl z-50 p-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                                                    <div className="max-h-60 overflow-y-auto custom-scrollbar">
-                                                        {districts.map(d => (
-                                                            <div
-                                                                key={d}
-                                                                className={`px-4 py-3 hover:bg-white/5 rounded-xl cursor-pointer transition-all ${formData.district === d ? 'bg-primary/10 border-l-4 border-primary' : ''}`}
-                                                                onClick={() => {
-                                                                    setFormData((prev) => ({ ...prev, district: d }));
-                                                                    setShowDistrictDropdown(false);
-                                                                    setErrors((prev: Record<string, string>) => {
-                                                                        const newErrors = { ...prev };
-                                                                        delete newErrors.district;
-                                                                        return newErrors;
-                                                                    });
-                                                                }}
-                                                            >
-                                                                <span className={`text-sm ${formData.district === d ? 'text-primary font-bold' : 'text-text-dim hover:text-text'}`}>{d}</span>
-                                                            </div>
-                                                        ))}
-                                                    </div>
+                                                    {categories.map(cat => (
+                                                        <div
+                                                            key={cat.id}
+                                                            className={`flex items-center px-4 py-3 hover:bg-white/5 rounded-xl cursor-pointer transition-all ${formData.seekField === cat.id ? 'bg-primary/10 border-l-4 border-primary' : ''}`}
+                                                            onClick={() => {
+                                                                setFormData(prev => ({ ...prev, seekField: cat.id }));
+                                                                setShowFieldDropdown(false);
+                                                                setErrors(prev => {
+                                                                    const newErrors = { ...prev };
+                                                                    delete newErrors.seekField;
+                                                                    return newErrors;
+                                                                });
+                                                            }}
+                                                        >
+                                                            <span className="mr-3 text-xl">{cat.icon}</span>
+                                                            <span className={`text-sm ${formData.seekField === cat.id ? 'text-primary font-bold' : 'text-text-dim hover:text-text'}`}>{cat.label}</span>
+                                                        </div>
+                                                    ))}
                                                 </div>
                                             )}
-                                            {errors.district && (
-                                                <p className="text-red-500 text-xs mt-2 ml-1">{errors.district}</p>
+                                            {errors.seekField && (
+                                                <p className="text-red-500 text-xs mt-2 ml-1">{errors.seekField}</p>
                                             )}
                                         </div>
                                     </div>
