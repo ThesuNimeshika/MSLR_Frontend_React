@@ -48,7 +48,7 @@ const Header: React.FC = () => {
                     <div className="flex items-center space-x-2">
                         <button
                             onClick={() => navigate('/recruiter-guide')}
-                            className={`px-5 py-3 text-sm font-bold transition-all rounded-xl hover:bg-white/5 cursor-pointer ${isActive('/recruiter-guide') ? 'text-primary bg-primary/10 border border-primary/20 shadow-lg shadow-primary/5' : 'text-text-dim hover:text-text'}`}
+                            className={`px-5 py-3 text-sm font-bold transition-all rounded-xl hover:bg-white/5 cursor-pointer ${isActive('/recruiter-guide') ? 'text-primary bg-primary/10 border border-primary/20 shadow-lg shadow-primary/5' : 'text-text-dim hover:text-primary'}`}
                         >
                             Post a Job
                         </button>
