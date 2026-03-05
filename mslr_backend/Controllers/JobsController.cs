@@ -10,12 +10,6 @@ namespace MslrBackend.Controllers
     [ApiController]
     public class JobsController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-
-        public JobsController(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
 
         [HttpGet]
         public IActionResult GetJobs()
@@ -25,16 +19,16 @@ namespace MslrBackend.Controllers
             
             try 
             {
-                var config = _configuration.GetSection("DbConfig");
-                db.OpenConnection(config["UserId"], config["Password"], config["Server"]);
+                db.openConnection();
 
                 string sql = @"
-                    SELECT j.JOB_ID, j.JOB_TITLE, j.COMPANY_NAME, j.JOB_DESCRIPTION, j.POSTED_DATE, j.EXPIRY_DATE,
+                    SELECT j.JOB_ID, j.JOB_TITLE, c.FULL_NAME as COMPANY_NAME, j.JOB_DESCRIPTION, j.POSTED_DATE, j.APPLICATION_DEADLINE,
                            s.SECTOR_ID, s.SECTOR_NAME, s.SUB_SECTOR_NAME,
                            l.LOCATION_ID, l.LOCATION_NAME
                     FROM JOBS j
-                    LEFT JOIN SECTORS s ON j.SECTOR_ID = s.SECTOR_ID
-                    LEFT JOIN LOCATIONS l ON j.LOCATION_ID = l.LOCATION_ID
+                    LEFT JOIN CLIENT_USER c ON j.CLIENT_USER_ID = c.CLIENT_USER_ID
+                    LEFT JOIN SECTOR s ON j.SECTOR_ID = s.SECTOR_ID
+                    LEFT JOIN LOCATION l ON j.LOCATION_ID = l.LOCATION_ID
                     ORDER BY j.POSTED_DATE DESC";
 
                 using (var cmd = new OracleCommand(sql, db.GetCon()))
@@ -67,16 +61,16 @@ namespace MslrBackend.Controllers
             
             try 
             {
-                var config = _configuration.GetSection("DbConfig");
-                db.OpenConnection(config["UserId"], config["Password"], config["Server"]);
+                db.openConnection();
 
                 string sql = @"
-                    SELECT j.JOB_ID, j.JOB_TITLE, j.COMPANY_NAME, j.JOB_DESCRIPTION, j.POSTED_DATE, j.EXPIRY_DATE,
+                    SELECT j.JOB_ID, j.JOB_TITLE, c.FULL_NAME as COMPANY_NAME, j.JOB_DESCRIPTION, j.POSTED_DATE, j.APPLICATION_DEADLINE,
                            s.SECTOR_ID, s.SECTOR_NAME, s.SUB_SECTOR_NAME,
                            l.LOCATION_ID, l.LOCATION_NAME
                     FROM JOBS j
-                    LEFT JOIN SECTORS s ON j.SECTOR_ID = s.SECTOR_ID
-                    LEFT JOIN LOCATIONS l ON j.LOCATION_ID = l.LOCATION_ID
+                    LEFT JOIN CLIENT_USER c ON j.CLIENT_USER_ID = c.CLIENT_USER_ID
+                    LEFT JOIN SECTOR s ON j.SECTOR_ID = s.SECTOR_ID
+                    LEFT JOIN LOCATION l ON j.LOCATION_ID = l.LOCATION_ID
                     WHERE 1=1";
 
                 if (!string.IsNullOrEmpty(title)) sql += " AND j.JOB_TITLE LIKE :title";
@@ -113,21 +107,21 @@ namespace MslrBackend.Controllers
         {
             return new Job
             {
-                JobId = reader.GetInt32(0),
+                JobId = reader.GetDecimal(0),
                 JobTitle = reader.GetString(1),
-                CompanyName = reader.GetString(2),
+                CompanyName = reader.IsDBNull(2) ? null : reader.GetString(2),
                 JobDescription = reader.IsDBNull(3) ? null : reader.GetString(3),
                 PostedDate = reader.GetDateTime(4),
-                ExpiryDate = reader.IsDBNull(5) ? null : reader.GetDateTime(5),
-                SectorId = reader.IsDBNull(6) ? null : (int?)reader.GetInt32(6),
+                ApplicationDeadline = reader.IsDBNull(5) ? null : reader.GetDateTime(5),
+                SectorId = reader.IsDBNull(6) ? 0 : reader.GetDecimal(6),
                 Sector = reader.IsDBNull(6) ? null : new Sector { 
-                    SectorId = reader.GetInt32(6), 
+                    SectorId = reader.GetDecimal(6), 
                     SectorName = reader.GetString(7),
                     SubSectorName = reader.IsDBNull(8) ? null : reader.GetString(8)
                 },
-                LocationId = reader.IsDBNull(9) ? null : (int?)reader.GetInt32(9),
+                LocationId = reader.IsDBNull(9) ? 0 : reader.GetDecimal(9),
                 Location = reader.IsDBNull(9) ? null : new Location { 
-                    LocationId = reader.GetInt32(9), 
+                    LocationId = reader.GetDecimal(9), 
                     LocationName = reader.GetString(10) 
                 }
             };

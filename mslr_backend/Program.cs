@@ -1,5 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using MslrBackend.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,23 +8,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Configure Oracle Database
-var connectionString = builder.Configuration.GetConnectionString("OracleDb");
-builder.Services.AddDbContext<MslrBackend.Data.ApplicationDbContext>(options =>
-    options.UseOracle(connectionString));
-
 // Add CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
-        policy => policy.AllowAnyOrigin() // Relaxed for debugging
+        policy => policy.AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader());
 });
 
 var app = builder.Build();
 
-// Root endpoint for simple verification
+// Root endpoint
 app.MapGet("/", () => Results.Ok(new { message = "MSLR Backend is Running!", time = DateTime.Now }));
 
 // Configure the HTTP request pipeline.
@@ -34,25 +29,26 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// app.UseHttpsRedirection(); // Disabled for local dev debugging
 app.UseCors("AllowFrontend");
 app.UseAuthorization();
 
-// Diagnostics moved to /api/health and /api/Sectors/test-connection
-
-// Add a quick health check endpoint to verify DB connection
-app.MapGet("/api/health", async (MslrBackend.Data.ApplicationDbContext db) => {
+// Health check endpoint — tests DB connection
+app.MapGet("/api/health", () => {
+    var db = new CONNECTION();
     try {
-        var canConnect = await db.Database.CanConnectAsync();
+        db.openConnection();
         return Results.Ok(new { 
-            Database = canConnect ? "Connected" : "Failed",
-            ConnectionString = "Check appsettings.json"
+            Database = "Connected",
+            Status = "Backend is alive",
+            Server = "192.168.250.22:1521/orcl"
         });
     } catch (Exception ex) {
         return Results.Problem(
-            detail: ex.ToString(),
+            detail: ex.Message,
             title: "Database Connection Error"
         );
+    } finally {
+        db.Close();
     }
 });
 

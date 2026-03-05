@@ -57,6 +57,9 @@ namespace MslrBackend.Models
         [Column("JOB_TITLE")]
         public string JobTitle { get; set; } = string.Empty;
 
+        [NotMapped]
+        public string? CompanyName { get; set; }
+
         [Required]
         [Column("JOB_DESCRIPTION")]
         public string JobDescription { get; set; } = string.Empty;

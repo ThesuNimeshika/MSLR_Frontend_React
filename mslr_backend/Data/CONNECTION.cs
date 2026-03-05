@@ -1,56 +1,59 @@
 using System;
 using System.Data;
-using Oracle.ManagedDataAccess.Client; // Using the managed Oracle driver for .NET 9
+using Oracle.ManagedDataAccess.Client;
 
-/// <summary>
-/// Summary description for CONNECTION
-/// </summary>
-public class CONNECTION
+namespace MslrBackend.Data
 {
-    private OracleConnection _conn;
 
-    public CONNECTION()
+    public class CONNECTION
     {
-    }
-
-    /// <summary>
-    /// Opens a connection to the Oracle database using parameters.
-    /// In modern .NET, we usually get these from configuration.
-    /// </summary>
-    public void OpenConnection(string userId, string password, string dataSource)
-    {
-        try
+        public CONNECTION()
         {
-            string connectionString = $"User Id={userId};Password={password};Data Source={dataSource};Pooling=false;";
-            _conn = new OracleConnection(connectionString);
-            _conn.Open();
         }
-        catch (Exception ex)
-        {
-            // Log error or rethrow
-            throw new Exception($"Failed to open connection: {ex.Message}", ex);
-        }
-    }
 
-    public OracleConnection GetCon()
-    {
-        return _conn;
-    }
+        public OracleConnection Conn;
 
-    public void Close()
-    {
-        try
+        /// <summary>
+        /// Opens an Oracle connection using hardcoded credentials.
+        /// </summary>
+        public void openConnection()
         {
-            if (_conn != null && _conn.State == ConnectionState.Open)
+            // Hardcoded connection credentials
+            string dbUser   = "MSLR";
+            string dbPwd    = "MSLR";
+            string dbServer = "192.168.250.22:1521/orcl";
+
+            try
             {
-                _conn.Close();
-                _conn.Dispose();
+                string connectionString = $"User Id={dbUser};Password={dbPwd};Data Source={dbServer};Pooling=false;";
+                Conn = new OracleConnection(connectionString);
+                Conn.Open();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to open connection: {ex.Message}", ex);
             }
         }
-        catch (Exception ex)
+
+        public OracleConnection GetCon()
         {
-            // Logging can be added here
-            string error = ex.Message;
+            return Conn;
+        }
+
+        public void Close()
+        {
+            try
+            {
+                if (Conn != null && Conn.State == ConnectionState.Open)
+                {
+                    Conn.Close();
+                    Conn.Dispose();
+                }
+            }
+            catch (Exception ex)
+            {
+                string error = ex.Message;
+            }
         }
     }
 }

@@ -16,6 +16,32 @@ interface ApiJob {
     sector?: { sectorName: string };
 }
 
+interface ApiSector {
+    sectorId: number;
+    sectorName: string;
+    subSectorName: string | null;
+}
+
+interface DynamicCategory {
+    title: string;
+    count: string;
+    icon: string;
+    color: string;
+}
+
+const CATEGORY_MAP: { [key: string]: { icon: string; color: string } } = {
+    'Accounting': { icon: '📂', color: '#4f46e5' },
+    'Technology': { icon: '💻', color: '#6366f1' },
+    'IT': { icon: '💻', color: '#6366f1' },
+    'Logistics': { icon: '📦', color: '#10b981' },
+    'Design': { icon: '🖋️', color: '#f43f5e' },
+    'Finance': { icon: '📊', color: '#f59e0b' },
+    'Healthcare': { icon: '🏥', color: '#3b82f6' },
+    'Marketing': { icon: '📢', color: '#8b5cf6' },
+};
+
+const DEFAULT_CATEGORY = { icon: '🏢', color: '#8b5cf6' };
+
 interface Job {
     title: string;
     company: string;
@@ -31,6 +57,7 @@ const API_URL = 'http://localhost:5194/api';
 const LandingPage: React.FC = () => {
     const [filter, setFilter] = useState<'All' | 'Recent'>('All');
     const [jobs, setJobs] = useState<Job[]>([]);
+    const [categories, setCategories] = useState<DynamicCategory[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [hasError, setHasError] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string>('');
@@ -78,6 +105,30 @@ const LandingPage: React.FC = () => {
 
     useEffect(() => {
         fetchJobs();
+
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch(`${API_URL}/Sectors`);
+                if (response.ok) {
+                    const data: ApiSector[] = await response.json();
+
+                    const uniqueSectors = Array.from(new Set(data.map(s => s.sectorName)));
+
+                    const mappedCategories = uniqueSectors.map(sectorName => ({
+                        title: sectorName,
+                        count: '120+', // Placeholder fallback count
+                        icon: CATEGORY_MAP[sectorName]?.icon || DEFAULT_CATEGORY.icon,
+                        color: CATEGORY_MAP[sectorName]?.color || DEFAULT_CATEGORY.color,
+                    }));
+
+                    setCategories(mappedCategories.slice(0, 6)); // Display top 6
+                }
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        };
+
+        fetchCategories();
     }, []);
 
     const handleSearch = (params: { title: string; locations: string[]; categories: string[] }) => {
@@ -89,14 +140,7 @@ const LandingPage: React.FC = () => {
         });
     };
 
-    const categories = [
-        { title: 'Technology', count: '1,240', icon: '💻', color: '#6366f1' },
-        { title: 'Logistics', count: '850', icon: '📦', color: '#10b981' },
-        { title: 'Design', count: '420', icon: '🖋️', color: '#f43f5e' },
-        { title: 'Finance', count: '670', icon: '📊', color: '#f59e0b' },
-        { title: 'Healthcare', count: '310', icon: '🏥', color: '#3b82f6' },
-        { title: 'Marketing', count: '540', icon: '📢', color: '#8b5cf6' },
-    ];
+    // Categories are now dynamically fetched
 
     const filteredJobs = filter === 'Recent' ? jobs.filter(j => j.isRecent) : jobs;
 

@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using MslrBackend.Data;
 using MslrBackend.Models;
 using Oracle.ManagedDataAccess.Client;
-using System.Data;
 
 namespace MslrBackend.Controllers
 {
@@ -10,13 +9,6 @@ namespace MslrBackend.Controllers
     [ApiController]
     public class LocationsController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-
-        public LocationsController(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-
         [HttpGet]
         public IActionResult GetLocations()
         {
@@ -25,14 +17,9 @@ namespace MslrBackend.Controllers
             
             try 
             {
-                var config = _configuration.GetSection("DbConfig");
-                db.OpenConnection(
-                    config["UserId"], 
-                    config["Password"], 
-                    config["Server"]
-                );
+                db.openConnection();
 
-                using (var cmd = new OracleCommand("SELECT LOCATION_ID, LOCATION_NAME FROM LOCATIONS", db.GetCon()))
+                using (var cmd = new OracleCommand("SELECT LOCATION_ID, LOCATION_NAME FROM LOCATION", db.GetCon()))
                 {
                     using (var reader = cmd.ExecuteReader())
                     {
