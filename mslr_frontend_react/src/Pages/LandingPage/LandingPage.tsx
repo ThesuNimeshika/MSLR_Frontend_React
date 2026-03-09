@@ -5,7 +5,7 @@ import SearchBar from '../../Components/SearchBar';
 import JobCard from '../../Components/JobCard';
 import CategoryCard from '../../Components/CategoryCard';
 import '../../css/LandingPage.css';
-
+import logo from '../../assets/mslLOGO.png';
 interface ApiJob {
     jobId: number;
     jobTitle: string;
@@ -166,13 +166,27 @@ const LandingPage: React.FC = () => {
                         <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse mr-2.5"></span>
                         <span className="text-primary font-bold text-[10px] tracking-[0.3em] uppercase">The Future of Recruitment is Here</span>
                     </div>
-                    <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-6 tracking-tighter leading-[0.9] animate-in fade-in slide-in-from-bottom-8 duration-800 text-text">
-                        We connect <span className="text-primary italic font-serif">Talent </span> with organizations, that<br />
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-indigo-400 to-indigo-600">Demand Excellence discreetly</span> with trust
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 tracking-tighter leading-[1.1] animate-in fade-in slide-in-from-bottom-8 duration-800 text-text">
+                        {/* Row 1: Logo + connect Talent with organizations, */}
+                        <span className="flex items-center gap-2">
+                            <img
+                                src={logo}
+                                alt="MSL Logo"
+                                className="h-8 sm:h-12 md:h-14 lg:h-16 w-auto object-contain flex-shrink-0"
+                            />
+                            <span>connect <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6366f1] via-indigo-500 to-[#f1ac29] italic font-serif">
+                                Talent
+                            </span> with organizations,</span>
+                        </span>
+
+                        {/* Row 2: that demand excellence. */}
+                        <span className="block">
+                            that <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6366f1] via-indigo-500 to-[#f1ac29] italic font-serif">
+                                demand excellence.
+                            </span>
+                        </span>
                     </h1>
-                    <p className="max-w-3xl mx-auto text-text text-lg sm:text-xl md:text-2xl mb-12 animate-in fade-in slide-in-from-bottom-12 duration-1000 leading-relaxed font-semibold">
-                        Connecting global talent with world-class opportunities. <br className="hidden md:block" /> Your career journey starts here with MSL Recruitment.
-                    </p>
+
                     <div className="search-bar-hero-container animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300">
                         <SearchBar onSearch={handleSearch} />
                     </div>
@@ -186,7 +200,9 @@ const LandingPage: React.FC = () => {
                         <div>
                             <div className="flex items-center space-x-3 mb-3">
                                 <div className="h-1 w-12 bg-primary rounded-full"></div>
-                                <span className="text-primary font-bold text-sm tracking-[0.2em] uppercase">Opportunity</span>
+                                <span className="font-bold text-sm tracking-[0.2em] uppercase bg-clip-text text-transparent bg-gradient-to-r from-[#6366f1] to-[#f1ac29]">
+                                    Opportunity
+                                </span>
                             </div>
                             <h2 className="text-5xl md:text-6xl font-bold text-text tracking-tight">
                                 {isLoading ? 'Searching...' : filteredJobs.length > 0 ? 'Search Results' : 'Featured Jobs'}

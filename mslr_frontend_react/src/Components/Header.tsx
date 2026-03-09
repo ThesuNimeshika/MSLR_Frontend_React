@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import logo from '../assets/mslLOGO.png';
 
 const Header: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,16 +14,16 @@ const Header: React.FC = () => {
     return (
         <header className="fixed top-0 left-0 w-full z-50 glass py-5 border-b border-white/5">
             <div className="max-w-[1700px] mx-auto px-8 flex justify-between items-center">
-                <div className="flex items-center space-x-3 group cursor-pointer" onClick={() => navigate('/')}>
-                    <div className="w-11 h-11 bg-gradient-to-br from-primary via-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl shadow-primary/20 transform group-hover:rotate-6 transition-all duration-300">
-                        <span className="text-white font-black text-2xl">M</span>
-                    </div>
-                    <div className="flex flex-col -space-y-1">
-                        <span className="text-2xl font-black tracking-tighter text-text">
-                            MSL<span className="text-primary">R</span>
-                        </span>
-                        <span className="text-[10px] font-bold tracking-[0.3em] text-primary/80 uppercase">Recruitment</span>
-                    </div>
+
+                <div className="flex flex-col cursor-pointer" onClick={() => navigate('/')}>
+                    <img
+                        src={logo}
+                        alt="Logo"
+                        className="h-11 w-auto object-contain object-left"
+                    />
+                    <span className="text-[14px] font-bold tracking-[0.2em] uppercase pl-[1.6rem] bg-clip-text text-transparent bg-gradient-to-r from-[#6366f1] to-[#f1ac29]">
+                        Recruitment
+                    </span>
                 </div>
 
                 <nav className="hidden lg:flex items-center space-x-10 text-sm font-bold tracking-widest">
@@ -60,7 +61,10 @@ const Header: React.FC = () => {
                         </button>
                         <button
                             onClick={() => navigate('/login')}
-                            className={`px-8 py-3.5 text-sm font-black rounded-2xl shadow-2xl transition-all transform hover:-translate-y-1 active:translate-y-0 hover:scale-[1.02] ${isActive('/login') ? 'bg-indigo-600 text-white shadow-indigo-500/40 ring-2 ring-primary/30' : 'bg-primary hover:bg-indigo-500 text-white shadow-primary/40'}`}
+                            className={`px-8 py-3.5 text-sm font-black rounded-2xl shadow-2xl transition-all transform hover:-translate-y-1 active:translate-y-0 hover:scale-[1.02] ${isActive('/login')
+                                    ? 'bg-gradient-to-r from-[#6366f1] to-[#f1ac29] text-white shadow-indigo-500/40 ring-2 ring-[#6366f1]/30'
+                                    : 'bg-gradient-to-r from-[#6366f1] to-[#f1ac29] hover:from-indigo-500 hover:to-[#e89c1f] text-white shadow-indigo-400/30'
+                                }`}
                         >
                             Candidate Portal
                         </button>

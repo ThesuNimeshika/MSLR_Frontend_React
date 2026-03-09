@@ -301,7 +301,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
 
                 <button
                     onClick={handleSearchClick}
-                    className="bg-primary hover:bg-indigo-500 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-primary/20 transition-all whitespace-nowrap active:scale-95"
+                    className="bg-gradient-to-r from-[#6366f1] to-[#f1ac29] hover:from-indigo-500 hover:to-[#e89c1f] text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all whitespace-nowrap active:scale-95"
                 >
                     Search Jobs
                 </button>

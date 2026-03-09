@@ -9,10 +9,10 @@
 
 .hero-section {
     position: relative;
-    min-height: 100vh;
-    padding: 120px 20px 100px;
+    min-height: auto;           /* was: 100vh — this was centering vertically */
+    padding: 140px 20px 60px;  /* was: 120px 20px 100px */
     display: flex;
-    align-items: flex-start;
+    align-items: flex-start;    /* was: flex-start — keep this */
     justify-content: center;
     overflow: visible;
     background-color: var(--bg);
@@ -20,14 +20,14 @@
 
 @media (min-height: 800px) {
     .hero-section {
-        align-items: center;
+        align-items: flex-start; /* was: center — this was pushing content to middle */
     }
 }
 
 @media (max-width: 1024px) {
     .hero-section {
         min-height: auto;
-        padding-top: 100px;
+        padding-top: 80px;       /* was: 100px */
     }
 }
 
@@ -38,7 +38,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('../assets/land.png');
+
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
