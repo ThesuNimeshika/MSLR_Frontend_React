@@ -28,14 +28,51 @@ const SeekerLogin: React.FC = () => {
     const [showTooltip, setShowTooltip] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
-    const categories = [
-        { id: 'tech', label: 'Technology', icon: '💻' },
-        { id: 'logistics', label: 'Logistics', icon: '📦' },
-        { id: 'design', label: 'Design', icon: '🖋️' },
-        { id: 'finance', label: 'Finance', icon: '📊' },
-        { id: 'healthcare', label: 'Healthcare', icon: '🏥' },
-        { id: 'marketing', label: 'Marketing', icon: '📢' },
-    ];
+    const API_URL = 'http://localhost:5194/api';
+    const CATEGORY_MAP: { [key: string]: { icon: string; color: string } } = {
+        'Accounting': { icon: '📂', color: '#4f46e5' },
+        'Technology': { icon: '💻', color: '#6366f1' },
+        'IT': { icon: '💻', color: '#6366f1' },
+        'Logistics': { icon: '📦', color: '#10b981' },
+        'Design': { icon: '🖋️', color: '#f43f5e' },
+        'Finance': { icon: '📊', color: '#f59e0b' },
+        'Healthcare': { icon: '🏥', color: '#3b82f6' },
+        'Marketing': { icon: '📢', color: '#8b5cf6' },
+    };
+    const DEFAULT_CATEGORY = { icon: '🏢', color: '#8b5cf6' };
+
+    const [categories, setCategories] = useState<{ id: string; label: string; icon: string }[]>([]);
+
+    React.useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch(`${API_URL}/Sectors`);
+                if (response.ok) {
+                    const data: { sectorName: string }[] = await response.json();
+                    const uniqueSectors = Array.from(new Set(data.map(s => s.sectorName)));
+                    const mappedCategories = uniqueSectors.map(sectorName => ({
+                        id: sectorName,
+                        label: sectorName,
+                        icon: CATEGORY_MAP[sectorName]?.icon || DEFAULT_CATEGORY.icon,
+                    }));
+                    setCategories(mappedCategories.slice(0, 8)); // Display top 8 or whatever
+                }
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+                // Fallback to defaults if fetch fails
+                setCategories([
+                    { id: 'Technology', label: 'Technology', icon: '💻' },
+                    { id: 'Logistics', label: 'Logistics', icon: '📦' },
+                    { id: 'Design', label: 'Design', icon: '🖋️' },
+                    { id: 'Finance', label: 'Finance', icon: '📊' },
+                    { id: 'Healthcare', label: 'Healthcare', icon: '🏥' },
+                    { id: 'Marketing', label: 'Marketing', icon: '📢' },
+                ]);
+            }
+        };
+
+        fetchCategories();
+    }, []);
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
