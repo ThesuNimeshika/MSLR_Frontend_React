@@ -6,6 +6,7 @@ import JobCard from '../../Components/JobCard';
 import CategoryCard from '../../Components/CategoryCard';
 import '../../css/LandingPage.css';
 import logo from '../../assets/mslLOGO.png';
+import landImg from '../../assets/land.png'; // Restored land image
 interface ApiJob {
     jobId: number;
     jobTitle: string;
@@ -158,7 +159,7 @@ const LandingPage: React.FC = () => {
             <Header />
 
             {/* Hero Section */}
-            <section className="hero-section z-20">
+            <section className="hero-section z-20" style={{ '--hero-bg': `url(${landImg})` } as React.CSSProperties}>
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-primary/10 via-transparent to-transparent blur-[120px] opacity-40 pointer-events-none z-10"></div>
 
                 <div className="max-w-7xl w-full text-center relative z-20 mx-auto px-5">
@@ -186,11 +187,12 @@ const LandingPage: React.FC = () => {
                             </span>
                         </span>
                     </h1>
-
-                    <div className="search-bar-hero-container animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300">
+                    <br></br><br></br><br></br>
+                    <div className="search-bar-hero-container mt-[15vh] md:mt-[20vh] animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300">
                         <SearchBar onSearch={handleSearch} />
                     </div>
                 </div>
+
             </section>
 
             {/* Featured Jobs */}
