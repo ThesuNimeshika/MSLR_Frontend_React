@@ -220,13 +220,13 @@ const LandingPage: React.FC = () => {
                         <div className="flex bg-white/5 p-1 rounded-xl border border-glass-border">
                             <button
                                 onClick={() => setFilter('All')}
-                                className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${filter === 'All' ? 'bg-primary text-white shadow-lg' : 'text-text-dim hover:text-primary'}`}
+                                className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${filter === 'All' ? 'bg-gradient-to-r from-[#6366f1] to-[#f1ac29] text-white shadow-lg' : 'text-text-dim hover:text-primary'}`}
                             >
                                 All Jobs
                             </button>
                             <button
                                 onClick={() => setFilter('Recent')}
-                                className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${filter === 'Recent' ? 'bg-primary text-white shadow-lg' : 'text-text-dim hover:text-primary'}`}
+                                className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${filter === 'Recent' ? 'bg-gradient-to-r from-[#6366f1] to-[#f1ac29] text-white shadow-lg' : 'text-text-dim hover:text-primary'}`}
                             >
                                 Recent
                             </button>

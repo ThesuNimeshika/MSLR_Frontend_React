@@ -62,8 +62,8 @@ const Header: React.FC = () => {
                         <button
                             onClick={() => navigate('/login')}
                             className={`px-8 py-3.5 text-sm font-black rounded-2xl shadow-2xl transition-all transform hover:-translate-y-1 active:translate-y-0 hover:scale-[1.02] ${isActive('/login')
-                                    ? 'bg-gradient-to-r from-[#6366f1] to-[#f1ac29] text-white shadow-indigo-500/40 ring-2 ring-[#6366f1]/30'
-                                    : 'bg-gradient-to-r from-[#6366f1] to-[#f1ac29] hover:from-indigo-500 hover:to-[#e89c1f] text-white shadow-indigo-400/30'
+                                ? 'bg-gradient-to-r from-[#6366f1] to-[#f1ac29] text-white shadow-indigo-500/40 ring-2 ring-[#6366f1]/30'
+                                : 'bg-gradient-to-r from-[#6366f1] to-[#f1ac29] hover:from-indigo-500 hover:to-[#e89c1f] text-white shadow-indigo-400/30'
                                 }`}
                         >
                             Candidate Portal
@@ -101,7 +101,7 @@ const Header: React.FC = () => {
                         </button>
                         <button
                             onClick={() => { navigate('/login'); setIsMenuOpen(false); }}
-                            className="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-lg"
+                            className="w-full py-3 bg-gradient-to-r from-[#6366f1] to-[#f1ac29] text-white font-bold rounded-xl shadow-lg"
                         >
                             Job Seeker Login
                         </button>

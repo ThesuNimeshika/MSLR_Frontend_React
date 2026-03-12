@@ -167,7 +167,7 @@ const RecruiterGuide: React.FC = () => {
                                     ))}
                                 </ul>
 
-                                <button className={`w-full py-4 rounded-xl font-bold transition-all active:scale-[0.98] ${plan.mostPopular ? 'bg-primary text-white shadow-xl shadow-primary/20' : 'bg-white/5 border border-white/10 text-text hover:bg-white/10'}`}>
+                                <button className={`w-full py-4 rounded-xl font-bold transition-all active:scale-[0.98] ${plan.mostPopular ? 'bg-gradient-to-r from-[#6366f1] to-[#f1ac29] text-white shadow-xl shadow-indigo-500/20' : 'bg-white/5 border border-white/10 text-text hover:bg-white/10'}`}>
                                     {plan.price === 'Quotation' ? 'Get a Quotation' : 'Get Started'}
                                 </button>
                             </div>

@@ -282,7 +282,7 @@ const OverseasRegistration: React.FC = () => {
 
                             <button
                                 type="submit"
-                                className="w-full py-4 bg-primary hover:bg-indigo-500 text-white font-bold rounded-2xl shadow-xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-95 text-lg mt-4 uppercase"
+                                className="w-full py-4 bg-gradient-to-r from-[#6366f1] to-[#f1ac29] hover:from-indigo-500 hover:to-[#e89c1f] text-white font-bold rounded-2xl shadow-xl shadow-indigo-500/30 transition-all hover:scale-[1.02] active:scale-95 text-lg mt-4 uppercase"
                             >
                                 REGISTER
                             </button>

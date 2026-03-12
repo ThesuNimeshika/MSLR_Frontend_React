@@ -195,7 +195,7 @@ const SeekerLogin: React.FC = () => {
                         <button
                             onClick={verifyOtp}
                             disabled={otp.join('').length < 6}
-                            className="w-full py-4 bg-primary hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-2xl shadow-lg transition-all active:scale-95"
+                            className="w-full py-4 bg-gradient-to-r from-[#6366f1] to-[#f1ac29] hover:from-indigo-500 hover:to-[#e89c1f] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/30 transition-all active:scale-95"
                         >
                             VERIFY CODE
                         </button>
@@ -492,7 +492,7 @@ const SeekerLogin: React.FC = () => {
 
                             <button
                                 type="submit"
-                                className="w-full py-4 bg-primary hover:bg-indigo-500 text-white font-bold rounded-2xl shadow-xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-95 text-lg mt-4 uppercase"
+                                className="w-full py-4 bg-gradient-to-r from-[#6366f1] to-[#f1ac29] hover:from-indigo-500 hover:to-[#e89c1f] text-white font-bold rounded-2xl shadow-xl shadow-indigo-500/30 transition-all hover:scale-[1.02] active:scale-95 text-lg mt-4 uppercase"
                             >
                                 {authView === 'login' ? 'LOGIN' : authView === 'signup' ? 'REGISTER' : forgotStep === 'email' ? 'SEND OTP' : 'RESET'}
                             </button>
