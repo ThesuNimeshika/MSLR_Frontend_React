@@ -10,9 +10,9 @@
 .hero-section {
     position: relative;
     min-height: 100vh;
-    padding: 22vh 20px 100px;
+    padding: 0 20px;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
     overflow: visible;
     background-color: var(--bg);

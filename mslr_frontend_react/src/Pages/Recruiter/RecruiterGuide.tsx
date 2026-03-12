@@ -114,7 +114,7 @@ const RecruiterGuide: React.FC = () => {
                         <span className="text-primary font-bold text-xs tracking-widest uppercase">💼 For Recruiters who wanna advertise</span>
                     </div>
                     <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight font-outfit">
-                        Struggling to find the right <span className="text-primary">CANDIDATE? </span>Try us out!
+                        Struggling to find the right <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6366f1] via-indigo-500 to-[#f1ac29] italic font-serif">CANDIDATE? </span>Try us out!
                     </h1>
                     <p className="max-w-3xl mx-auto text-text-dim text-lg mb-16 leading-relaxed">
                         Join MSLR and streamline your hiring process. Post vacancies, track applications, and find the perfect talent for your business with our AI-powered portal.

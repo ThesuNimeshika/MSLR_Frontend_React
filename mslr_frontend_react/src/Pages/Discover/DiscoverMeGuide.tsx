@@ -41,7 +41,7 @@ const DiscoverMeGuide: React.FC = () => {
                         <span className="text-primary font-bold text-xs tracking-widest uppercase">🌍 For Overseas Candidates</span>
                     </div>
                     <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight font-outfit">
-                        Discover Your Future in <span className="text-primary">SRI LANKA</span>
+                        Discover Your Future in <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6366f1] via-indigo-500 to-[#f1ac29] italic font-serif">SRI LANKA</span>
                     </h1>
                     <p className="max-w-3xl mx-auto text-text-dim text-lg mb-16 leading-relaxed">
                         Are you an overseas professional looking to bring your talents home? Discover matching vacancies in Sri Lanka's top companies and get the support you need to make your next big move.
@@ -68,10 +68,10 @@ const DiscoverMeGuide: React.FC = () => {
                         </button>
                     </div>
                 </div>
-            </section>
+            </section >
 
             <Footer />
-        </div>
+        </div >
     );
 };
 

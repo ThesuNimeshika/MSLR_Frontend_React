@@ -21,7 +21,7 @@ const SeekerLogin: React.FC = () => {
         firstName: '',
         lastName: '',
         gender: '',
-        seekField: '',
+        seekField: [] as string[],
         receiveEmails: false
     });
     const [cvFile, setCvFile] = useState<File | null>(null);
@@ -41,38 +41,69 @@ const SeekerLogin: React.FC = () => {
     };
     const DEFAULT_CATEGORY = { icon: '🏢', color: '#8b5cf6' };
 
-    const [categories, setCategories] = useState<{ id: string; label: string; icon: string }[]>([]);
+    const [categoriesData, setCategoriesData] = useState<{ id: string; label: string; icon: string; subcategories: { id: string; label: string }[] }[]>([]);
+    const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+
 
     React.useEffect(() => {
         const fetchCategories = async () => {
             try {
                 const response = await fetch(`${API_URL}/Sectors`);
                 if (response.ok) {
-                    const data: { sectorName: string }[] = await response.json();
-                    const uniqueSectors = Array.from(new Set(data.map(s => s.sectorName)));
-                    const mappedCategories = uniqueSectors.map(sectorName => ({
-                        id: sectorName,
-                        label: sectorName,
-                        icon: CATEGORY_MAP[sectorName]?.icon || DEFAULT_CATEGORY.icon,
-                    }));
-                    setCategories(mappedCategories.slice(0, 8)); // Display top 8 or whatever
+                    const data: { sectorId: number, sectorName: string, subSectorName: string | null }[] = await response.json();
+
+                    const groups: { [key: string]: { id: string; label: string; icon: string; subcategories: { id: string; label: string }[] } } = {};
+
+                    data.forEach(s => {
+                        if (!groups[s.sectorName]) {
+                            groups[s.sectorName] = {
+                                id: '',
+                                label: s.sectorName,
+                                icon: CATEGORY_MAP[s.sectorName]?.icon || DEFAULT_CATEGORY.icon,
+                                subcategories: []
+                            };
+                        }
+                        if (s.subSectorName) {
+                            groups[s.sectorName].subcategories.push({
+                                id: s.sectorId.toString(),
+                                label: s.subSectorName
+                            });
+                        } else {
+                            groups[s.sectorName].id = s.sectorId.toString();
+                        }
+                    });
+
+                    setCategoriesData(Object.values(groups));
                 }
             } catch (error) {
                 console.error("Error fetching categories:", error);
-                // Fallback to defaults if fetch fails
-                setCategories([
-                    { id: 'Technology', label: 'Technology', icon: '💻' },
-                    { id: 'Logistics', label: 'Logistics', icon: '📦' },
-                    { id: 'Design', label: 'Design', icon: '🖋️' },
-                    { id: 'Finance', label: 'Finance', icon: '📊' },
-                    { id: 'Healthcare', label: 'Healthcare', icon: '🏥' },
-                    { id: 'Marketing', label: 'Marketing', icon: '📢' },
-                ]);
             }
         };
 
         fetchCategories();
     }, []);
+
+    const toggleExpand = (id: string, e?: React.MouseEvent) => {
+        e?.stopPropagation();
+        if (expandedCategories.includes(id)) {
+            setExpandedCategories(expandedCategories.filter(item => item !== id));
+        } else {
+            setExpandedCategories([...expandedCategories, id]);
+        }
+    };
+
+    const findSelectedLabel = () => {
+        if (formData.seekField.length === 0) return null;
+        if (formData.seekField.length === 1) {
+            const id = formData.seekField[0];
+            for (const cat of categoriesData) {
+                if (cat.id === id) return { label: cat.label, icon: cat.icon };
+                const sub = cat.subcategories.find(s => s.id === id);
+                if (sub) return { label: sub.label, icon: cat.icon };
+            }
+        }
+        return { label: `${formData.seekField.length} fields selected`, icon: '📁' };
+    };
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -148,7 +179,7 @@ const SeekerLogin: React.FC = () => {
             }
 
             if (!formData.gender) newErrors.gender = 'Please select your gender';
-            if (!formData.seekField || formData.seekField === '') newErrors.seekField = 'Please select your home district';
+            if (formData.seekField.length === 0) newErrors.seekField = 'Please select your industry field';
         } else if (authView === 'forgot') {
             if (forgotStep === 'email') {
                 if (!formData.email) newErrors.email = 'Email address is required';
@@ -166,13 +197,70 @@ const SeekerLogin: React.FC = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (validateForm()) {
             if (authView === 'login') {
-                console.log('Login attempt:', { email: formData.email, password: formData.password });
+                try {
+                    const formDataToSend = new FormData();
+                    formDataToSend.append('email', formData.email);
+                    formDataToSend.append('password', formData.password);
+
+                    const response = await fetch(`${API_URL}/Auth/Login`, {
+                        method: 'POST',
+                        body: formDataToSend,
+                    });
+
+                    if (response.ok) {
+                        const seekerData = await response.json();
+                        alert(`Welcome back, ${seekerData.firstName}!`);
+                        localStorage.setItem('seekerUser', JSON.stringify(seekerData));
+                        // Redirect or update app state here
+                        console.log('Login successful:', seekerData);
+                    } else if (response.status === 401) {
+                        alert('Invalid email or password. Please try again.');
+                    } else {
+                        const errorData = await response.json();
+                        alert(`Login failed: ${errorData.detail || errorData.error || 'Unknown error'}`);
+                    }
+                } catch (error) {
+                    console.error('Error during login:', error);
+                    alert('An error occurred during login. Please try again later.');
+                }
             } else if (authView === 'signup') {
-                console.log('Registration attempt:', { ...formData, cvFile });
+                try {
+                    const formDataToSend = new FormData();
+                    formDataToSend.append('firstName', formData.firstName);
+                    formDataToSend.append('lastName', formData.lastName);
+                    formDataToSend.append('email', formData.email);
+                    formDataToSend.append('password', formData.password);
+                    formDataToSend.append('gender', formData.gender);
+                    formDataToSend.append('seekField', formData.seekField.join(','));
+                    formDataToSend.append('receiveEmails', formData.receiveEmails.toString());
+                    if (cvFile) {
+                        formDataToSend.append('cvFile', cvFile);
+                    }
+                    formDataToSend.append('confirmPassword', formData.confirmPassword);
+
+                    const response = await fetch(`${API_URL}/Auth/Register`, {
+                        method: 'POST',
+                        body: formDataToSend,
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        alert('Registration successful!');
+                        setAuthView('login');
+                        console.log('Success:', result);
+                    } else {
+                        const errorData = await response.json();
+                        alert(`Registration failed: ${errorData.detail || errorData.error || 'Unknown error'}`);
+                        console.error('Failure:', errorData);
+                    }
+                } catch (error) {
+                    console.error('Error during registration:', error);
+                    alert('An error occurred during registration. Please try again later.');
+                }
             } else if (authView === 'forgot') {
                 if (forgotStep === 'email') {
                     // Simulate sending OTP
@@ -410,11 +498,11 @@ const SeekerLogin: React.FC = () => {
                                                 className={`w-full px-5 py-4 rounded-2xl bg-white/5 border ${errors.seekField ? 'border-red-500' : theme === 'light' ? 'border-black' : 'border-white/10'} text-text flex items-center justify-between cursor-pointer hover:border-primary/50 transition-all`}
                                                 onClick={() => setShowFieldDropdown(!showFieldDropdown)}
                                             >
-                                                <span className={formData.seekField ? 'text-text' : 'text-text-dim/50'}>
-                                                    {formData.seekField ? (
+                                                <span className={formData.seekField.length > 0 ? 'text-text' : 'text-text-dim/50'}>
+                                                    {formData.seekField.length > 0 ? (
                                                         <span className="flex items-center gap-2">
-                                                            <span>{categories.find(c => c.id === formData.seekField)?.icon}</span>
-                                                            <span>{categories.find(c => c.id === formData.seekField)?.label}</span>
+                                                            <span>{findSelectedLabel()?.icon}</span>
+                                                            <span>{findSelectedLabel()?.label}</span>
                                                         </span>
                                                     ) : 'Select Industry Field'}
                                                 </span>
@@ -422,29 +510,85 @@ const SeekerLogin: React.FC = () => {
                                             </div>
 
                                             {showFieldDropdown && (
-                                                <div className="absolute top-full left-0 w-full mt-2 glass rounded-[1.5rem] border-white/10 overflow-hidden shadow-2xl z-50 p-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                                                    {categories.map(cat => (
-                                                        <div
-                                                            key={cat.id}
-                                                            className={`flex items-center px-4 py-3 hover:bg-white/5 rounded-xl cursor-pointer transition-all ${formData.seekField === cat.id ? 'bg-primary/10 border-l-4 border-primary' : ''}`}
-                                                            onClick={() => {
-                                                                setFormData(prev => ({ ...prev, seekField: cat.id }));
-                                                                setShowFieldDropdown(false);
-                                                                setErrors(prev => {
-                                                                    const newErrors = { ...prev };
-                                                                    delete newErrors.seekField;
-                                                                    return newErrors;
-                                                                });
-                                                            }}
-                                                        >
-                                                            <span className="mr-3 text-xl">{cat.icon}</span>
-                                                            <span className={`text-sm ${formData.seekField === cat.id ? 'text-primary font-bold' : 'text-text-dim hover:text-text'}`}>{cat.label}</span>
-                                                        </div>
-                                                    ))}
+                                                <div className="absolute top-full left-0 w-full mt-2 glass rounded-[1.5rem] border-white/10 overflow-hidden shadow-2xl z-50 p-3 animate-in fade-in slide-in-from-top-2 duration-200 max-h-[400px] overflow-y-auto">
+                                                    <div className="flex justify-between items-center mb-3 px-1">
+                                                        <span className="text-xs font-bold text-text-dim uppercase tracking-wider">Classification</span>
+                                                        {formData.seekField.length > 0 && (
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setFormData(prev => ({ ...prev, seekField: [] }));
+                                                                }}
+                                                                className="text-[10px] text-primary hover:underline font-bold"
+                                                            >
+                                                                Clear all
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                    {categoriesData.length === 0 ? (
+                                                        <div className="text-center py-4 text-text-dim text-xs font-medium">Loading classifications...</div>
+                                                    ) : (
+                                                        categoriesData.map(cat => (
+                                                            <div key={cat.label} className="mb-1">
+                                                                <div
+                                                                    className={`flex items-center px-3 py-2.5 hover:bg-white/5 rounded-lg cursor-pointer transition-all group ${expandedCategories.includes(cat.label) ? 'bg-white/5' : ''}`}
+                                                                    onClick={() => toggleExpand(cat.label)}
+                                                                >
+                                                                    <div
+                                                                        className={`w-4 h-4 rounded border flex items-center justify-center mr-3 transition-all ${cat.id && formData.seekField.includes(cat.id) ? 'bg-primary border-primary' : 'border-primary/50'}`}
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            const subIds = cat.subcategories.map(s => s.id);
+                                                                            const allIds = cat.id ? [cat.id, ...subIds] : subIds;
+                                                                            const isAllSelected = allIds.every(id => formData.seekField.includes(id));
+
+                                                                            setFormData(prev => {
+                                                                                let newFields;
+                                                                                if (isAllSelected) {
+                                                                                    newFields = prev.seekField.filter(id => !allIds.includes(id));
+                                                                                } else {
+                                                                                    newFields = Array.from(new Set([...prev.seekField, ...allIds]));
+                                                                                }
+                                                                                return { ...prev, seekField: newFields };
+                                                                            });
+                                                                        }}
+                                                                    >
+                                                                        {((cat.id && formData.seekField.includes(cat.id)) || (cat.subcategories.length > 0 && cat.subcategories.every(s => formData.seekField.includes(s.id)))) && <span className="text-[10px] text-white">✓</span>}
+                                                                    </div>
+                                                                    <span className="mr-2 text-base">{cat.icon}</span>
+                                                                    <span className={`text-sm flex-1 text-left transition-colors group-hover:text-indigo-400 ${cat.id && formData.seekField.includes(cat.id) ? 'text-indigo-400 font-bold' : 'text-text-dim'}`}>{cat.label}</span>
+                                                                    {cat.subcategories.length > 0 && (
+                                                                        <span className="text-[10px] text-text-dim ml-2 transition-transform duration-300 group-hover:text-indigo-400" style={{ transform: expandedCategories.includes(cat.label) ? 'rotate(180deg)' : 'rotate(0)' }}>▼</span>
+                                                                    )}
+                                                                </div>
+
+                                                                {expandedCategories.includes(cat.label) && cat.subcategories.length > 0 && (
+                                                                    <div className="ml-9 mt-1 space-y-1 animate-in slide-in-from-top-1 duration-200">
+                                                                        {cat.subcategories.map(sub => (
+                                                                            <div
+                                                                                key={sub.id}
+                                                                                className="flex items-center justify-start text-left px-3 py-2 hover:bg-white/5 rounded-lg cursor-pointer transition-colors"
+                                                                                onClick={() => {
+                                                                                    setFormData(prev => {
+                                                                                        const newFields = prev.seekField.includes(sub.id)
+                                                                                            ? prev.seekField.filter(id => id !== sub.id)
+                                                                                            : [...prev.seekField, sub.id];
+                                                                                        return { ...prev, seekField: newFields };
+                                                                                    });
+                                                                                }}
+                                                                            >
+                                                                                <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center mr-3 transition-all ${formData.seekField.includes(sub.id) ? 'bg-primary border-primary' : 'border-primary/50'}`}>
+                                                                                    {formData.seekField.includes(sub.id) && <span className="text-[8px] text-white">✓</span>}
+                                                                                </div>
+                                                                                <span className={`text-xs transition-colors group-hover:text-indigo-400 ${formData.seekField.includes(sub.id) ? 'text-indigo-400 font-medium' : 'text-text-dim hover:text-indigo-400'}`}>{sub.label}</span>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        ))
+                                                    )}
                                                 </div>
-                                            )}
-                                            {errors.seekField && (
-                                                <p className="text-red-500 text-xs mt-2 ml-1">{errors.seekField}</p>
                                             )}
                                         </div>
                                     </div>
