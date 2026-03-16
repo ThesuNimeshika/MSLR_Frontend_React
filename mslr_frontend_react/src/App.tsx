@@ -6,6 +6,7 @@ import DiscoverMeGuide from './Pages/Discover/DiscoverMeGuide.tsx';
 import OverseasRegistration from './Pages/Discover/OverseasRegistration.tsx';
 import SeekerLogin from './Pages/Auth/SeekerLogin.tsx';
 import MSLHome from './Pages/MSL Admin/MSLHome.tsx';
+import MSLSeeker from './Pages/MSL Admin/MSLSeeker.tsx';
 import { ThemeProvider } from './context/ThemeContext';
 import './App.css';
 
@@ -21,6 +22,7 @@ function App() {
           <Route path="/overseas-registration" element={<OverseasRegistration />} />
           <Route path="/login" element={<SeekerLogin />} />
           <Route path="/msl-home" element={<MSLHome />} />
+          <Route path="/msl-seeker" element={<MSLSeeker />} />
         </Routes>
       </Router>
     </ThemeProvider>
