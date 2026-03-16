@@ -25,6 +25,7 @@ interface Seeker {
     experience: string;
     skills: string[];
     location: string;
+    sector: string;
     status: "active" | "inactive" | "blacklisted";
     about: string;
     currentPosition: string;
@@ -80,7 +81,9 @@ const INITIAL_SEEKERS: Seeker[] = [
         email: "john.doe@email.com", phone: "+94 71 234 5678",
         experience: "senior",
         skills: ["JavaScript", "React", "Node.js", "MongoDB"],
-        location: "Colombo, Sri Lanka", status: "active",
+        location: "Colombo, Sri Lanka",
+        sector: "Technology",
+        status: "active",
         about: "Experienced full-stack developer with 5+ years in web development.",
         currentPosition: "Senior Developer at TechCorp",
         education: "BSc Computer Science, University of Colombo",
@@ -94,7 +97,9 @@ const INITIAL_SEEKERS: Seeker[] = [
         email: "jane.smith@email.com", phone: "+94 72 345 6789",
         experience: "mid",
         skills: ["Python", "Django", "PostgreSQL", "AWS"],
-        location: "Kandy, Sri Lanka", status: "active",
+        location: "Kandy, Sri Lanka",
+        sector: "Technology",
+        status: "active",
         about: "Python developer passionate about building scalable applications.",
         currentPosition: "Python Developer at DataTech",
         education: "BSc Software Engineering, University of Peradeniya",
@@ -107,7 +112,9 @@ const INITIAL_SEEKERS: Seeker[] = [
         email: "mike.johnson@email.com", phone: "+94 73 456 7890",
         experience: "entry",
         skills: ["HTML", "CSS", "JavaScript", "React"],
-        location: "Galle, Sri Lanka", status: "inactive",
+        location: "Galle, Sri Lanka",
+        sector: "Technology",
+        status: "inactive",
         about: "Frontend developer looking for opportunities to grow and learn.",
         currentPosition: "Junior Developer at WebStart",
         education: "Diploma in Web Development, SLIIT",
@@ -120,7 +127,9 @@ const INITIAL_SEEKERS: Seeker[] = [
         email: "sarah.wilson@email.com", phone: "+94 74 567 8901",
         experience: "executive",
         skills: ["Java", "Spring Boot", "Microservices", "Kubernetes"],
-        location: "Jaffna, Sri Lanka", status: "active",
+        location: "Jaffna, Sri Lanka",
+        sector: "Technology",
+        status: "active",
         about: "Senior software architect with expertise in enterprise solutions.",
         currentPosition: "Software Architect at EnterpriseTech",
         education: "MSc Computer Science, University of Jaffna",
@@ -201,6 +210,8 @@ export default function MSLSeeker(): JSX.Element {
     const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
     const [showFieldDropdown, setShowFieldDropdown] = useState(false);
     const [cvFile, setCvFile] = useState<File | null>(null);
+    const [showSectorFilterDropdown, setShowSectorFilterDropdown] = useState(false);
+    const [showStatusFilterDropdown, setShowStatusFilterDropdown] = useState(false);
     const profileRef = useRef<HTMLDivElement>(null);
 
     const API_URL = 'http://localhost:5194/api';
@@ -275,9 +286,19 @@ export default function MSLSeeker(): JSX.Element {
         }
     };
 
-    // close profile on outside click
+    // close dropdowns on outside click
     useEffect(() => {
-        const h = (e: MouseEvent) => { if (profileRef.current && !profileRef.current.contains(e.target as Node)) setProfileOpen(false); };
+        const h = (e: MouseEvent) => {
+            const target = e.target as Node;
+            if (profileRef.current && !profileRef.current.contains(target)) setProfileOpen(false);
+
+            // Close filter dropdowns if clicking outside the filter area
+            const filterBar = document.getElementById('seeker-filter-bar');
+            if (filterBar && !filterBar.contains(target)) {
+                setShowSectorFilterDropdown(false);
+                setShowStatusFilterDropdown(false);
+            }
+        };
         document.addEventListener("mousedown", h);
         return () => document.removeEventListener("mousedown", h);
     }, []);
@@ -288,11 +309,11 @@ export default function MSLSeeker(): JSX.Element {
         const matchSearch = !q ||
             s.firstName.toLowerCase().includes(q) ||
             s.lastName.toLowerCase().includes(q) ||
-            s.skills.some((sk) => sk.toLowerCase().includes(q)) ||
+            s.skills.some(sk => sk.toLowerCase().includes(q)) ||
             s.location.toLowerCase().includes(q);
-        const matchSector = !sectorFilter || s.skills.some((sk) => sk.toLowerCase().includes(sectorFilter.toLowerCase()));
-        const matchStatus = !statusFilter || s.status === statusFilter;
-        return matchSearch && matchSector && matchStatus;
+        const matchesSector = sectorFilter ? s.sector === sectorFilter : true;
+        const matchesStatus = statusFilter ? s.status === statusFilter : true;
+        return matchSearch && matchesSector && matchesStatus;
     });
 
     const changeStatus = (id: number, newStatus: Seeker["status"]) => {
@@ -326,21 +347,15 @@ export default function MSLSeeker(): JSX.Element {
             lastName: addForm.lastName,
             email: addForm.email,
             phone: "", // Not in registration but in Seeker interface
-            experience: "entry", // Mocked for now
-            skills: addForm.seekField.map(id => {
-                for (const cat of categoriesData) {
-                    if (cat.id === id) return cat.label;
-                    const sub = cat.subcategories.find(s => s.id === id);
-                    if (sub) return sub.label;
-                }
-                return "Unknown";
-            }),
-            location: "Sri Lanka",
+            experience: "Intermediate",
+            skills: ["Skill 1", "Skill 2"], // Mock
+            location: "Colombo, Sri Lanka", // Mock
+            sector: findSelectedLabel()?.label || "General",
             status: "active",
-            about: "New seeker profile added by admin",
+            about: "Bio...",
             currentPosition: "Seeking opportunities",
             education: "Not specified",
-            resumes: [], // Admin doesn't upload file here yet? 
+            resumes: [], // Admin doesn't upload file here yet?
             // Registration has CV upload. I can mock it or leave as empty resumes.
         };
         setSeekers((prev) => [newSeeker, ...prev]);
@@ -360,414 +375,481 @@ export default function MSLSeeker(): JSX.Element {
     };
 
     return (
-        <>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <div className="min-h-screen bg-white text-gray-900 font-sans">
+            <style>{`
+                @keyframes fadeDown {
+                    from { opacity: 0; transform: translateY(-10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .glass-dropdown {
+                    background: rgba(255, 255, 255, 0.95);
+                    backdrop-filter: blur(10px);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                }
+            `}</style>
 
-            <div className="min-h-screen bg-slate-50 font-sans">
-
-                {/* ── HEADER ──────────────────────────────────────────────────── */}
-                <header className="bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
-                    <div className="max-w-7xl mx-auto px-4">
-                        <div className="flex items-center justify-between h-14">
-                            <div className="flex items-center gap-4">
-                                <Link to="/msl-home" className="flex items-center gap-2">
-                                    <img src={mslLogo} alt="MSL Logo" className="h-8 w-auto" />
-                                </Link>
-                                <div className="relative">
-                                    <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
-                                    <input
-                                        type="text" placeholder="Title, skill or company"
-                                        className="pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48 md:w-72"
-                                    />
-                                </div>
+            <header className="bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
+                <div className="max-w-7xl mx-auto px-4">
+                    <div className="flex items-center justify-between h-14">
+                        <div className="flex items-center gap-4">
+                            <Link to="/msl-home" className="flex items-center gap-2">
+                                <img src={mslLogo} alt="MSL Logo" className="h-8 w-auto" />
+                            </Link>
+                            <div className="relative">
+                                <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
+                                <input
+                                    type="text" placeholder="Title, skill or company"
+                                    className="pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48 md:w-72"
+                                />
                             </div>
+                        </div>
 
-                            <div className="flex items-center gap-4">
-                                <Link to="/msl-home" className="text-blue-600 font-semibold flex items-center gap-1 text-sm">
-                                    <Icon name="home" /><span className="hidden md:inline">Home</span>
-                                </Link>
-                                <button className="relative text-gray-600 hover:text-blue-600 text-sm flex items-center gap-1" onClick={() => push("5 new notifications", "info")}>
-                                    <Icon name="bell" /><span className="hidden md:inline">Notifications</span>
-                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">5</span>
+                        <div className="flex items-center gap-4">
+                            <Link to="/msl-home" className="text-blue-600 font-semibold flex items-center gap-1 text-sm">
+                                <Icon name="home" /><span className="hidden md:inline">Home</span>
+                            </Link>
+                            <button className="relative text-gray-600 hover:text-blue-600 text-sm flex items-center gap-1" onClick={() => push("5 new notifications", "info")}>
+                                <Icon name="bell" /><span className="hidden md:inline">Notifications</span>
+                                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">5</span>
+                            </button>
+                            <div className="relative" ref={profileRef}>
+                                <button onClick={() => setProfileOpen((v) => !v)} className="flex items-center gap-1 p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold">AD</div>
+                                    <Icon name="chevron-down" className="text-gray-500 text-xs" />
                                 </button>
-                                <div className="relative" ref={profileRef}>
-                                    <button onClick={() => setProfileOpen((v) => !v)} className="flex items-center gap-1 p-2 hover:bg-gray-50 rounded-lg transition-colors">
-                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold">AD</div>
-                                        <Icon name="chevron-down" className="text-gray-500 text-xs" />
-                                    </button>
-                                    {profileOpen && (
-                                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-50" style={{ animation: "fadeDown .15s ease-out" }}>
-                                            {[{ icon: "user", label: "Profile" }, { icon: "cog", label: "Settings" }].map(({ icon, label }) => (
-                                                <button key={label} className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                                    <Icon name={icon} className="text-gray-400" /> {label}
-                                                </button>
-                                            ))}
-                                            <div className="border-t border-gray-100 my-1" />
-                                            <button className="flex items-center gap-3 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                                                <Icon name="sign-out-alt" className="text-red-400" /> Logout
+                                {profileOpen && (
+                                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-50 animate-fade-in shadow-gray-200/50">
+                                        {[{ icon: "user", label: "Profile" }, { icon: "cog", label: "Settings" }].map(({ icon, label }) => (
+                                            <button key={label} className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                                <Icon name={icon} className="text-gray-400 w-4" /> {label}
                                             </button>
-                                        </div>
-                                    )}
-                                </div>
+                                        ))}
+                                        <div className="border-t border-gray-100 my-1" />
+                                        <button className="flex items-center gap-3 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                            <Icon name="sign-out-alt" className="text-red-400 w-4" /> Logout
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
-                </header>
+                </div>
+            </header>
 
-                {/* ── BODY ────────────────────────────────────────────────────── */}
-                <div className="flex pt-14 min-h-screen">
+            {/* ── BODY ────────────────────────────────────────────────────── */}
+            <div className="flex pt-14 min-h-screen">
 
-                    {/* ── SIDEBAR ─────────────────────────────────────────────── */}
-                    <aside className="hidden lg:block w-72 shrink-0 fixed left-0 top-14 h-[calc(100vh-3.5rem)] overflow-y-auto bg-slate-50 p-4 border-r border-gray-200">
+                {/* ── SIDEBAR ─────────────────────────────────────────────── */}
+                <aside className="hidden lg:block w-72 shrink-0 fixed left-0 top-14 h-[calc(100vh-3.5rem)] overflow-y-auto bg-slate-50 p-4 border-r border-gray-200">
 
-                        {/* Profile card */}
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-4 overflow-hidden">
-                            <div className="h-20 bg-gradient-to-r from-blue-500 to-purple-600 relative flex items-end p-3">
-                                <span className="text-white text-xs font-medium opacity-90">Admin Dashboard</span>
-                            </div>
-                            <div className="px-4 pb-4">
-                                <div className="w-14 h-14 rounded-full border-4 border-white -mt-7 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-black text-lg shadow">M</div>
-                                <h2 className="text-sm font-bold text-gray-900 mt-2 leading-tight">Management Systems (Pvt) Ltd</h2>
-                                <p className="text-xs text-gray-500 italic mt-1">Empowering businesses through innovative recruitment solutions.</p>
-                                <div className="flex items-center mt-2 text-xs text-gray-500">
-                                    <Icon name="map-marker-alt" className="mr-1.5" />No.10, Gothami Road, Colombo 08
-                                </div>
+                    {/* Profile card */}
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-4 overflow-hidden">
+                        <div className="h-20 bg-gradient-to-r from-blue-500 to-purple-600 relative flex items-end p-3">
+                            <span className="text-white text-xs font-medium opacity-90">Admin Dashboard</span>
+                        </div>
+                        <div className="px-4 pb-4">
+                            <div className="w-14 h-14 rounded-full border-4 border-white -mt-7 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-black text-lg shadow">M</div>
+                            <h2 className="text-sm font-bold text-gray-900 mt-2 leading-tight">Management Systems (Pvt) Ltd</h2>
+                            <p className="text-xs text-gray-500 italic mt-1">Empowering businesses through innovative recruitment solutions.</p>
+                            <div className="flex items-center mt-2 text-xs text-gray-500">
+                                <Icon name="map-marker-alt" className="mr-1.5" />No.10, Gothami Road, Colombo 08
                             </div>
                         </div>
+                    </div>
 
-                        {/* Nav */}
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-                            <h3 className="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h3>
-                            <nav className="space-y-1">
-                                {NAV.map(({ label, icon, href, active }) => (
-                                    <Link key={label} to={href}
-                                        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors
+                    {/* Nav */}
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                        <h3 className="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h3>
+                        <nav className="space-y-1">
+                            {NAV.map(({ label, icon, href, active }) => (
+                                <Link key={label} to={href}
+                                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors
                       ${active ? "text-blue-600 bg-blue-50 font-medium" : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"}`}>
-                                        <Icon name={icon} className={active ? "text-blue-600" : "text-gray-400"} />
-                                        {label}
-                                    </Link>
-                                ))}
-                            </nav>
+                                    <Icon name={icon} className={active ? "text-blue-600" : "text-gray-400"} />
+                                    {label}
+                                </Link>
+                            ))}
+                        </nav>
 
-                            <div className="mt-4 pt-4 border-t border-gray-100">
-                                <button
-                                    onClick={() => setShowAddModal(true)}
-                                    className="w-full border border-blue-600 text-blue-600 py-2 px-4 rounded-lg text-sm hover:bg-blue-50 transition-colors flex items-center justify-center gap-2 font-medium"
-                                >
-                                    <Icon name="plus" /> Add New Seeker
-                                </button>
+                        <div className="mt-4 pt-4 border-t border-gray-100">
+                            <button
+                                onClick={() => setShowAddModal(true)}
+                                className="w-full border border-blue-600 text-blue-600 py-2 px-4 rounded-lg text-sm hover:bg-blue-50 transition-colors flex items-center justify-center gap-2 font-medium"
+                            >
+                                <Icon name="plus" /> Add New Seeker
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="mt-4 text-[10px] text-gray-400 space-y-1">
+                        <div className="flex flex-wrap gap-x-2 gap-y-1">
+                            {["About", "Help Center", "Privacy & Terms", "Advertising"].map((l) => (
+                                <Link key={l} to="#" className="hover:underline">{l}</Link>
+                            ))}
+                        </div>
+                        <p>MSL Recruitment © 2025</p>
+                    </div>
+                </aside>
+
+                {/* ── MAIN ────────────────────────────────────────────────── */}
+                <main className="w-full lg:ml-72 p-4 lg:p-6">
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+
+                        {/* Page header */}
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <h1 className="text-2xl font-black text-gray-900 tracking-tight">Seeker Management</h1>
+                                <p className="text-sm text-gray-500 mt-0.5">Manage and monitor all registered job seekers</p>
                             </div>
+                            <button
+                                onClick={() => setShowAddModal(true)}
+                                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 text-sm font-medium shadow-sm"
+                            >
+                                <Icon name="plus" /> Add Seeker
+                            </button>
                         </div>
 
-                        <div className="mt-4 text-[10px] text-gray-400 space-y-1">
-                            <div className="flex flex-wrap gap-x-2 gap-y-1">
-                                {["About", "Help Center", "Privacy & Terms", "Advertising"].map((l) => (
-                                    <Link key={l} to="#" className="hover:underline">{l}</Link>
-                                ))}
-                            </div>
-                            <p>MSL Recruitment © 2025</p>
-                        </div>
-                    </aside>
-
-                    {/* ── MAIN ────────────────────────────────────────────────── */}
-                    <main className="w-full lg:ml-72 p-4 lg:p-6">
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-
-                            {/* Page header */}
-                            <div className="flex items-center justify-between mb-6">
-                                <div>
-                                    <h1 className="text-2xl font-black text-gray-900 tracking-tight">Seeker Management</h1>
-                                    <p className="text-sm text-gray-500 mt-0.5">Manage and monitor all registered job seekers</p>
+                        {/* Search + filters */}
+                        <div className="bg-slate-50/80 backdrop-blur-sm rounded-2xl p-4 mb-8 border border-gray-100 shadow-sm" id="seeker-filter-bar">
+                            <div className="flex flex-col md:flex-row gap-4">
+                                <div className="relative flex-1 group">
+                                    <Icon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm group-focus-within:text-blue-500 transition-colors" />
+                                    <input
+                                        type="text" value={search} onChange={(e) => setSearch(e.target.value)}
+                                        placeholder="Search by name, skills or location…"
+                                        className="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm placeholder:text-gray-400"
+                                    />
                                 </div>
-                                <button
-                                    onClick={() => setShowAddModal(true)}
-                                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 text-sm font-medium shadow-sm"
-                                >
-                                    <Icon name="plus" /> Add Seeker
-                                </button>
-                            </div>
+                                <div className="flex gap-3 flex-wrap relative">
+                                    {/* Custom Sector Filter Dropdown */}
+                                    <div className="relative">
+                                        <div className="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none ring-blue-500 bg-white min-w-[160px] flex items-center justify-between cursor-pointer hover:border-blue-500 transition-all"
+                                            onClick={() => { setShowSectorFilterDropdown(!showSectorFilterDropdown); setShowStatusFilterDropdown(false); }}>
+                                            <span className={sectorFilter ? "text-gray-900 font-medium" : "text-gray-500"}>
+                                                {sectorFilter || "All Sectors"}
+                                            </span>
+                                            <Icon name="chevron-down" className={`text-[10px] text-gray-400 transition-transform ${showSectorFilterDropdown ? 'rotate-180' : ''}`} />
+                                        </div>
 
-                            {/* Search + filters */}
-                            <div className="bg-slate-50 rounded-xl p-4 mb-6 border border-gray-100">
-                                <div className="flex flex-col md:flex-row gap-3">
-                                    <div className="relative flex-1">
-                                        <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
-                                        <input
-                                            type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-                                            placeholder="Search by name, skills or location…"
-                                            className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        />
-                                    </div>
-                                    <div className="flex gap-3 flex-wrap">
-                                        <select value={sectorFilter} onChange={(e) => setSectorFilter(e.target.value)}
-                                            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                                            <option value="">All Sectors</option>
-                                            {["IT", "Finance", "Healthcare", "Manufacturing", "Education"].map((s) => (
-                                                <option key={s} value={s}>{s}</option>
-                                            ))}
-                                        </select>
-                                        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
-                                            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                                            <option value="">All Status</option>
-                                            <option value="active">Active</option>
-                                            <option value="inactive">Inactive</option>
-                                            <option value="blacklisted">Blacklisted</option>
-                                        </select>
-                                        {(search || sectorFilter || statusFilter) && (
-                                            <button onClick={() => { setSearch(""); setSectorFilter(""); setStatusFilter(""); }}
-                                                className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                                                <Icon name="times" className="mr-1" />Clear
-                                            </button>
+                                        {showSectorFilterDropdown && (
+                                            <div className="absolute top-full left-0 mt-3 w-72 glass-dropdown rounded-2xl shadow-2xl z-30 p-2 max-h-[400px] overflow-y-auto border border-gray-100"
+                                                style={{ animation: "fadeDown .25s cubic-bezier(0.16, 1, 0.3, 1)" }}>
+                                                <div className="px-4 py-2.5 text-[10px] font-black text-gray-400 uppercase tracking-[0.1em] border-b border-gray-50 mb-1 flex items-center gap-2">
+                                                    <Icon name="layer-group" className="text-[8px]" /> Industry Sector
+                                                </div>
+                                                <div className="px-4 py-2.5 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-700 rounded-xl cursor-pointer flex items-center gap-3 transition-colors font-medium"
+                                                    onClick={() => { setSectorFilter(""); setShowSectorFilterDropdown(false); }}>
+                                                    <Icon name="border-all" className="text-gray-300 text-xs" /> All Sectors
+                                                </div>
+                                                <div className="h-px bg-gray-50 my-1 mx-2" />
+                                                {categoriesData.map(cat => (
+                                                    <div key={cat.label} className="px-4 py-2.5 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-700 rounded-xl cursor-pointer flex items-center gap-3 transition-colors group/cat"
+                                                        onClick={() => { setSectorFilter(cat.label); setShowSectorFilterDropdown(false); }}>
+                                                        <span className="text-base group-hover/cat:scale-125 transition-transform">{cat.icon}</span>
+                                                        <span className="font-medium">{cat.label}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
                                         )}
                                     </div>
-                                </div>
-                            </div>
 
-                            {/* Table */}
-                            <div className="rounded-xl border border-gray-200 overflow-hidden">
-                                <div className="px-5 py-3 bg-slate-50 border-b border-gray-200 flex items-center justify-between">
-                                    <h3 className="text-sm font-semibold text-gray-800">Seekers List</h3>
-                                    <span className="text-xs text-gray-500 bg-white border border-gray-200 px-2.5 py-1 rounded-full font-medium">
-                                        {filtered.length} seeker{filtered.length !== 1 ? "s" : ""}
-                                    </span>
-                                </div>
-
-                                <div className="overflow-x-auto">
-                                    <table className="min-w-full divide-y divide-gray-100">
-                                        <thead className="bg-slate-50">
-                                            <tr>
-                                                {["Seeker", "Experience", "Skills", "Location", "Status", "Actions"].map((h) => (
-                                                    <th key={h} className="px-5 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{h}</th>
-                                                ))}
-                                            </tr>
-                                        </thead>
-                                        <tbody className="bg-white divide-y divide-gray-50">
-                                            {filtered.length === 0 ? (
-                                                <tr>
-                                                    <td colSpan={6} className="px-5 py-12 text-center text-gray-400 text-sm">
-                                                        <Icon name="users" className="text-3xl mb-2 block mx-auto" />
-                                                        No seekers match your filters.
-                                                    </td>
-                                                </tr>
-                                            ) : filtered.map((s) => (
-                                                <SeekerRow
-                                                    key={s.id}
-                                                    seeker={s}
-                                                    onView={() => setDetailSeeker(s)}
-                                                    onBlacklist={() => changeStatus(s.id, "blacklisted")}
-                                                    onActivate={() => changeStatus(s.id, "active")}
-                                                />
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                        </div>
-                    </main>
-                </div>
-
-                {/* ── DETAIL MODAL ────────────────────────────────────────────── */}
-                {detailSeeker && (
-                    <Modal onClose={() => setDetailSeeker(null)} title="Seeker Profile" wide>
-                        <SeekerDetail
-                            seeker={detailSeeker}
-                            onSetActiveResume={(rid) => setActiveResume(detailSeeker.id, rid)}
-                            onStatusChange={(newStatus) => {
-                                if (detailSeeker) {
-                                    changeStatus(detailSeeker.id, newStatus);
-                                    setDetailSeeker((d) => (d ? { ...d, status: newStatus } : null));
-                                }
-                            }}
-                        />
-                    </Modal>
-                )}
-
-                {/* ── ADD SEEKER MODAL ────────────────────────────────────────── */}
-                {showAddModal && (
-                    <Modal onClose={() => setShowAddModal(false)} title="Add New Seeker" wide>
-                        <form onSubmit={handleAddSubmit} className="space-y-5">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">First Name</label>
-                                    <input type="text" required value={addForm.firstName}
-                                        onChange={(e) => setAddForm((f) => ({ ...f, firstName: e.target.value }))}
-                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-slate-50/50" placeholder="John" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">Last Name</label>
-                                    <input type="text" required value={addForm.lastName}
-                                        onChange={(e) => setAddForm((f) => ({ ...f, lastName: e.target.value }))}
-                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-slate-50/50" placeholder="Doe" />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">Email</label>
-                                <input type="email" required value={addForm.email}
-                                    onChange={(e) => setAddForm((f) => ({ ...f, email: e.target.value }))}
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-slate-50/50" placeholder="john.doe@example.com" />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">Password</label>
-                                    <input type="password" required value={addForm.password}
-                                        onChange={(e) => setAddForm((f) => ({ ...f, password: e.target.value }))}
-                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-slate-50/50" placeholder="••••••••" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">Confirm Password</label>
-                                    <input type="password" required value={addForm.confirmPassword}
-                                        onChange={(e) => setAddForm((f) => ({ ...f, confirmPassword: e.target.value }))}
-                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-slate-50/50" placeholder="••••••••" />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Gender</label>
-                                    <div className="flex gap-6 mt-1">
-                                        {['Male', 'Female'].map((g) => (
-                                            <label key={g} className="flex items-center cursor-pointer group gap-2.5">
-                                                <input type="radio" name="gender" value={g} required
-                                                    onChange={(e) => setAddForm(f => ({ ...f, gender: e.target.value }))}
-                                                    checked={addForm.gender === g} className="sr-only" />
-                                                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${addForm.gender === g ? 'border-blue-600' : 'border-gray-300 group-hover:border-gray-400'}`}>
-                                                    <div className={`w-2.5 h-2.5 rounded-full bg-blue-600 transition-all ${addForm.gender === g ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`} />
-                                                </div>
-                                                <span className={`text-sm font-medium ${addForm.gender === g ? 'text-gray-900' : 'text-gray-500'}`}>{g}</span>
-                                            </label>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="relative">
-                                    <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">Seek Field</label>
-                                    <div className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm flex items-center justify-between cursor-pointer bg-slate-50/50 hover:border-blue-500 transition-all"
-                                        onClick={() => setShowFieldDropdown(!showFieldDropdown)}>
-                                        <span className={addForm.seekField.length > 0 ? "text-gray-900" : "text-gray-400"}>
-                                            {addForm.seekField.length > 0 ? (
-                                                <span className="flex items-center gap-2">
-                                                    <span>{findSelectedLabel()?.icon}</span>
-                                                    <span className="truncate max-w-[120px]">{findSelectedLabel()?.label}</span>
+                                    {/* Custom Status Filter Dropdown */}
+                                    <div className="relative">
+                                        <div className="border border-gray-200 rounded-xl px-5 py-3 text-sm ring-blue-500 bg-white min-w-[150px] flex items-center justify-between cursor-pointer hover:border-blue-500 hover:shadow-md transition-all group shadow-sm"
+                                            onClick={() => { setShowStatusFilterDropdown(!showStatusFilterDropdown); setShowSectorFilterDropdown(false); }}>
+                                            <div className="flex items-center gap-2.5">
+                                                {statusFilter ? (
+                                                    <div className={`w-2.5 h-2.5 rounded-full ${statusFilter === 'active' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' : statusFilter === 'inactive' ? 'bg-gray-400' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]'}`} />
+                                                ) : (
+                                                    <Icon name="filter" className="text-gray-400 text-xs" />
+                                                )}
+                                                <span className={statusFilter ? "text-gray-900 font-bold capitalize" : "text-gray-500 font-medium"}>
+                                                    {statusFilter || "Status"}
                                                 </span>
-                                            ) : 'Select Industry'}
-                                        </span>
-                                        <Icon name="chevron-down" className={`text-gray-400 text-xs transition-transform ${showFieldDropdown ? 'rotate-180' : ''}`} />
-                                    </div>
-
-                                    {showFieldDropdown && (
-                                        <div className="absolute bottom-full mb-2 left-0 w-full bg-white rounded-xl border border-gray-200 shadow-xl z-[60] p-2 max-h-[300px] overflow-y-auto">
-                                            {categoriesData.map(cat => (
-                                                <div key={cat.label} className="mb-1">
-                                                    <div className="flex items-center px-3 py-2 hover:bg-slate-50 rounded-lg cursor-pointer group"
-                                                        onClick={() => toggleExpand(cat.label)}>
-                                                        <div className={`w-4 h-4 rounded border flex items-center justify-center mr-2.5 transition-all ${cat.id && addForm.seekField.includes(cat.id) ? 'bg-blue-600 border-blue-600' : 'border-gray-300'}`}
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                const subIds = cat.subcategories.map(s => s.id);
-                                                                const allIds = cat.id ? [cat.id, ...subIds] : subIds;
-                                                                const isAllSelected = allIds.every(id => addForm.seekField.includes(id));
-                                                                setAddForm(prev => ({
-                                                                    ...prev,
-                                                                    seekField: isAllSelected ? prev.seekField.filter(id => !allIds.includes(id)) : Array.from(new Set([...prev.seekField, ...allIds]))
-                                                                }));
-                                                            }}>
-                                                            {((cat.id && addForm.seekField.includes(cat.id)) || (cat.subcategories.length > 0 && cat.subcategories.every(s => addForm.seekField.includes(s.id)))) && <Icon name="check" className="text-[8px] text-white" />}
-                                                        </div>
-                                                        <span className="mr-2">{cat.icon}</span>
-                                                        <span className="text-sm flex-1 font-medium text-gray-700">{cat.label}</span>
-                                                        {cat.subcategories.length > 0 && <Icon name="chevron-down" className={`text-[10px] text-gray-400 transition-transform ${expandedCategories.includes(cat.label) ? 'rotate-180' : ''}`} />}
-                                                    </div>
-
-                                                    {expandedCategories.includes(cat.label) && cat.subcategories.map(sub => (
-                                                        <div key={sub.id} className="ml-8 flex items-center px-3 py-1.5 hover:bg-slate-50 rounded-lg cursor-pointer"
-                                                            onClick={() => setAddForm(prev => ({
-                                                                ...prev,
-                                                                seekField: prev.seekField.includes(sub.id) ? prev.seekField.filter(x => x !== sub.id) : [...prev.seekField, sub.id]
-                                                            }))}>
-                                                            <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center mr-2.5 transition-all ${addForm.seekField.includes(sub.id) ? 'bg-blue-600 border-blue-600' : 'border-gray-300'}`}>
-                                                                {addForm.seekField.includes(sub.id) && <Icon name="check" className="text-[7px] text-white" />}
-                                                            </div>
-                                                            <span className="text-xs text-gray-600">{sub.label}</span>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            ))}
+                                            </div>
+                                            <Icon name="chevron-down" className={`text-[10px] text-gray-400 transition-transform duration-300 ${showStatusFilterDropdown ? 'rotate-180' : ''}`} />
                                         </div>
+
+                                        {showStatusFilterDropdown && (
+                                            <div className="absolute top-full right-0 mt-3 w-52 glass-dropdown rounded-2xl shadow-2xl z-30 p-2 overflow-hidden border border-gray-100"
+                                                style={{ animation: "fadeDown .25s cubic-bezier(0.16, 1, 0.3, 1)" }}>
+                                                <div className="px-4 py-2.5 text-[10px] font-black text-gray-400 uppercase tracking-[0.1em] border-b border-gray-50 mb-1 flex items-center gap-2">
+                                                    <Icon name="dot-circle" className="text-[8px]" /> Filter by Status
+                                                </div>
+                                                <div className="px-4 py-2.5 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-700 rounded-xl cursor-pointer flex items-center gap-3 transition-colors group/item font-medium"
+                                                    onClick={() => { setStatusFilter(""); setShowStatusFilterDropdown(false); }}>
+                                                    <div className="w-2.5 h-2.5 rounded-full border-2 border-gray-200 group-hover/item:border-blue-300" />
+                                                    <span>All Status</span>
+                                                </div>
+                                                <div className="h-px bg-gray-50 my-1 mx-2" />
+                                                {[
+                                                    { id: "active", label: "Active", color: "bg-emerald-500" },
+                                                    { id: "inactive", label: "Inactive", color: "bg-gray-400" },
+                                                    { id: "blacklisted", label: "Blacklisted", color: "bg-red-500" }
+                                                ].map(st => (
+                                                    <div key={st.id} className="px-4 py-2.5 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-700 rounded-xl cursor-pointer flex items-center gap-3 transition-colors group/item font-medium"
+                                                        onClick={() => { setStatusFilter(st.id as Seeker["status"]); setShowStatusFilterDropdown(false); }}>
+                                                        <div className={`w-2.5 h-2.5 rounded-full ${st.color} shadow-sm group-hover/item:scale-125 transition-transform`} />
+                                                        <span>{st.label}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                    {(search || sectorFilter || statusFilter) && (
+                                        <button onClick={() => { setSearch(""); setSectorFilter(""); setStatusFilter(""); }}
+                                            className="px-5 py-3 text-sm text-gray-500 hover:text-red-500 border border-gray-200 rounded-xl hover:bg-red-50 transition-all font-bold hover:border-red-100 flex items-center gap-2 group shadow-sm">
+                                            <Icon name="times-circle" className="text-xs group-hover:rotate-90 transition-transform" /> Clear
+                                        </button>
                                     )}
                                 </div>
                             </div>
+                        </div>
 
-                            <div className="flex items-center gap-3 px-1">
-                                <input type="checkbox" id="receiveEmails" checked={addForm.receiveEmails}
-                                    onChange={(e) => setAddForm(f => ({ ...f, receiveEmails: e.target.checked }))}
-                                    className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-                                <label htmlFor="receiveEmails" className="text-sm text-gray-600 cursor-pointer">Receive jobs by email</label>
+                        {/* Table */}
+                        <div className="rounded-xl border border-gray-200 overflow-hidden">
+                            <div className="px-5 py-3 bg-slate-50 border-b border-gray-200 flex items-center justify-between">
+                                <h3 className="text-sm font-semibold text-gray-800">Seekers List</h3>
+                                <span className="text-xs text-gray-500 bg-white border border-gray-200 px-2.5 py-1 rounded-full font-medium">
+                                    {filtered.length} seeker{filtered.length !== 1 ? "s" : ""}
+                                </span>
                             </div>
 
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full divide-y divide-gray-100">
+                                    <thead className="bg-slate-50">
+                                        <tr>
+                                            {["Seeker", "Experience", "Skills", "Location", "Status", "Actions"].map((h) => (
+                                                <th key={h} className="px-5 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{h}</th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-50">
+                                        {filtered.length === 0 ? (
+                                            <tr>
+                                                <td colSpan={6} className="px-5 py-12 text-center text-gray-400 text-sm">
+                                                    <Icon name="users" className="text-3xl mb-2 block mx-auto" />
+                                                    No seekers match your filters.
+                                                </td>
+                                            </tr>
+                                        ) : filtered.map((s) => (
+                                            <SeekerRow
+                                                key={s.id}
+                                                seeker={s}
+                                                onView={() => setDetailSeeker(s)}
+                                                onBlacklist={() => changeStatus(s.id, "blacklisted")}
+                                                onActivate={() => changeStatus(s.id, "active")}
+                                            />
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </main>
+            </div>
+
+            {/* ── DETAIL MODAL ────────────────────────────────────────────── */}
+            {detailSeeker && (
+                <Modal onClose={() => setDetailSeeker(null)} title="Seeker Profile" wide>
+                    <SeekerDetail
+                        seeker={detailSeeker}
+                        onSetActiveResume={(rid) => setActiveResume(detailSeeker.id, rid)}
+                        onStatusChange={(newStatus) => {
+                            if (detailSeeker) {
+                                changeStatus(detailSeeker.id, newStatus);
+                                setDetailSeeker((d) => (d ? { ...d, status: newStatus } : null));
+                            }
+                        }}
+                    />
+                </Modal>
+            )}
+
+            {/* ── ADD SEEKER MODAL ────────────────────────────────────────── */}
+            {showAddModal && (
+                <Modal onClose={() => setShowAddModal(false)} title="Add New Seeker" wide>
+                    <form onSubmit={handleAddSubmit} className="space-y-5">
+                        <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">CV / Resume</label>
-                                <div className="relative group">
-                                    <input type="file" onChange={handleFileChange} accept=".pdf,.doc,.docx"
-                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
-                                    <div className="flex items-center gap-4 p-4 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50 hover:bg-gray-50 transition-all cursor-pointer">
-                                        <div className="w-10 h-10 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center text-blue-600 transition-transform group-hover:scale-110">
-                                            <Icon name="cloud-upload-alt" className="text-lg" />
-                                        </div>
-                                        <div className="flex-1 text-left">
-                                            <p className="text-sm font-semibold text-gray-900 truncate">
-                                                {cvFile ? cvFile.name : 'Upload CV / Resume'}
-                                            </p>
-                                            <p className="text-[10px] text-gray-500">PDF, DOC or DOCX (Max 5MB)</p>
-                                        </div>
-                                        <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-lg text-[10px] font-bold">BROWSE</span>
-                                    </div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">First Name</label>
+                                <input type="text" required value={addForm.firstName}
+                                    onChange={(e) => setAddForm((f) => ({ ...f, firstName: e.target.value }))}
+                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-slate-50/50" placeholder="John" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">Last Name</label>
+                                <input type="text" required value={addForm.lastName}
+                                    onChange={(e) => setAddForm((f) => ({ ...f, lastName: e.target.value }))}
+                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-slate-50/50" placeholder="Doe" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">Email</label>
+                            <input type="email" required value={addForm.email}
+                                onChange={(e) => setAddForm((f) => ({ ...f, email: e.target.value }))}
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-slate-50/50" placeholder="john.doe@example.com" />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">Password</label>
+                                <input type="password" required value={addForm.password}
+                                    onChange={(e) => setAddForm((f) => ({ ...f, password: e.target.value }))}
+                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-slate-50/50" placeholder="••••••••" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">Confirm Password</label>
+                                <input type="password" required value={addForm.confirmPassword}
+                                    onChange={(e) => setAddForm((f) => ({ ...f, confirmPassword: e.target.value }))}
+                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-slate-50/50" placeholder="••••••••" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Gender</label>
+                                <div className="flex gap-6 mt-1">
+                                    {['Male', 'Female'].map((g) => (
+                                        <label key={g} className="flex items-center cursor-pointer group gap-2.5">
+                                            <input type="radio" name="gender" value={g} required
+                                                onChange={(e) => setAddForm(f => ({ ...f, gender: e.target.value }))}
+                                                checked={addForm.gender === g} className="sr-only" />
+                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${addForm.gender === g ? 'border-blue-600' : 'border-gray-300 group-hover:border-gray-400'}`}>
+                                                <div className={`w-2.5 h-2.5 rounded-full bg-blue-600 transition-all ${addForm.gender === g ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`} />
+                                            </div>
+                                            <span className={`text-sm font-medium ${addForm.gender === g ? 'text-gray-900' : 'text-gray-500'}`}>{g}</span>
+                                        </label>
+                                    ))}
                                 </div>
                             </div>
 
-                            <div className="flex justify-end gap-3 pt-3 border-t border-gray-100 mt-2">
-                                <button type="button" onClick={() => setShowAddModal(false)}
-                                    className="px-5 py-2.5 text-gray-600 font-medium hover:bg-gray-100 rounded-xl transition-colors text-sm">
-                                    Cancel
-                                </button>
-                                <button type="submit"
-                                    className="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-500/30 hover:bg-blue-700 transition-all active:scale-95">
-                                    REGISTER SEEKER
-                                </button>
-                            </div>
-                        </form>
-                    </Modal>
-                )}
+                            <div className="relative">
+                                <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">Seek Field</label>
+                                <div className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm flex items-center justify-between cursor-pointer bg-slate-50/50 hover:border-blue-500 transition-all"
+                                    onClick={() => setShowFieldDropdown(!showFieldDropdown)}>
+                                    <span className={addForm.seekField.length > 0 ? "text-gray-900" : "text-gray-400"}>
+                                        {addForm.seekField.length > 0 ? (
+                                            <span className="flex items-center gap-2">
+                                                <span>{findSelectedLabel()?.icon}</span>
+                                                <span className="truncate max-w-[120px]">{findSelectedLabel()?.label}</span>
+                                            </span>
+                                        ) : 'Select Industry'}
+                                    </span>
+                                    <Icon name="chevron-down" className={`text-gray-400 text-xs transition-transform ${showFieldDropdown ? 'rotate-180' : ''}`} />
+                                </div>
 
-                {/* ── NOTIFICATIONS ───────────────────────────────────────────── */}
-                <div className="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
-                    {notes.map(({ id, message, type }) => {
-                        const cfg = {
-                            info: { bg: "bg-blue-600", icon: "info-circle" },
-                            success: { bg: "bg-emerald-600", icon: "check-circle" },
-                            warning: { bg: "bg-amber-500", icon: "exclamation-triangle" },
-                            error: { bg: "bg-red-600", icon: "exclamation-circle" },
-                        }[type];
-                        return (
-                            <div key={id} className={`${cfg.bg} text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 text-sm pointer-events-auto`}
-                                style={{ animation: "slideIn .25s ease-out" }}>
-                                <Icon name={cfg.icon} />
-                                <span>{message}</span>
-                                <button onClick={() => dismiss(id)} className="ml-2 opacity-70 hover:opacity-100"><Icon name="times" /></button>
-                            </div>
-                        );
-                    })}
-                </div>
+                                {showFieldDropdown && (
+                                    <div className="absolute bottom-full mb-2 left-0 w-full bg-white rounded-xl border border-gray-200 shadow-xl z-[60] p-2 max-h-[300px] overflow-y-auto">
+                                        {categoriesData.map(cat => (
+                                            <div key={cat.label} className="mb-1">
+                                                <div className="flex items-center px-3 py-2 hover:bg-slate-50 rounded-lg cursor-pointer group"
+                                                    onClick={() => toggleExpand(cat.label)}>
+                                                    <div className={`w-4 h-4 rounded border flex items-center justify-center mr-2.5 transition-all ${cat.id && addForm.seekField.includes(cat.id) ? 'bg-blue-600 border-blue-600' : 'border-gray-300'}`}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            const subIds = cat.subcategories.map(s => s.id);
+                                                            const allIds = cat.id ? [cat.id, ...subIds] : subIds;
+                                                            const isAllSelected = allIds.every(id => addForm.seekField.includes(id));
+                                                            setAddForm(prev => ({
+                                                                ...prev,
+                                                                seekField: isAllSelected ? prev.seekField.filter(id => !allIds.includes(id)) : Array.from(new Set([...prev.seekField, ...allIds]))
+                                                            }));
+                                                        }}>
+                                                        {((cat.id && addForm.seekField.includes(cat.id)) || (cat.subcategories.length > 0 && cat.subcategories.every(s => addForm.seekField.includes(s.id)))) && <Icon name="check" className="text-[8px] text-white" />}
+                                                    </div>
+                                                    <span className="mr-2">{cat.icon}</span>
+                                                    <span className="text-sm flex-1 font-medium text-gray-700">{cat.label}</span>
+                                                    {cat.subcategories.length > 0 && <Icon name="chevron-down" className={`text-[10px] text-gray-400 transition-transform ${expandedCategories.includes(cat.label) ? 'rotate-180' : ''}`} />}
+                                                </div>
 
-                <style>{`
+                                                {expandedCategories.includes(cat.label) && cat.subcategories.map(sub => (
+                                                    <div key={sub.id} className="ml-8 flex items-center px-3 py-1.5 hover:bg-slate-50 rounded-lg cursor-pointer"
+                                                        onClick={() => setAddForm(prev => ({
+                                                            ...prev,
+                                                            seekField: prev.seekField.includes(sub.id) ? prev.seekField.filter(x => x !== sub.id) : [...prev.seekField, sub.id]
+                                                        }))}>
+                                                        <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center mr-2.5 transition-all ${addForm.seekField.includes(sub.id) ? 'bg-blue-600 border-blue-600' : 'border-gray-300'}`}>
+                                                            {addForm.seekField.includes(sub.id) && <Icon name="check" className="text-[7px] text-white" />}
+                                                        </div>
+                                                        <span className="text-xs text-gray-600">{sub.label}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 px-1">
+                            <input type="checkbox" id="receiveEmails" checked={addForm.receiveEmails}
+                                onChange={(e) => setAddForm(f => ({ ...f, receiveEmails: e.target.checked }))}
+                                className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                            <label htmlFor="receiveEmails" className="text-sm text-gray-600 cursor-pointer">Receive jobs by email</label>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">CV / Resume</label>
+                            <div className="relative group">
+                                <input type="file" onChange={handleFileChange} accept=".pdf,.doc,.docx"
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                                <div className="flex items-center gap-4 p-4 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50 hover:bg-gray-50 transition-all cursor-pointer">
+                                    <div className="w-10 h-10 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center text-blue-600 transition-transform group-hover:scale-110">
+                                        <Icon name="cloud-upload-alt" className="text-lg" />
+                                    </div>
+                                    <div className="flex-1 text-left">
+                                        <p className="text-sm font-semibold text-gray-900 truncate">
+                                            {cvFile ? cvFile.name : 'Upload CV / Resume'}
+                                        </p>
+                                        <p className="text-[10px] text-gray-500">PDF, DOC or DOCX (Max 5MB)</p>
+                                    </div>
+                                    <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-lg text-[10px] font-bold">BROWSE</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end gap-3 pt-3 border-t border-gray-100 mt-2">
+                            <button type="button" onClick={() => setShowAddModal(false)}
+                                className="px-5 py-2.5 text-gray-600 font-medium hover:bg-gray-100 rounded-xl transition-colors text-sm">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                className="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-500/30 hover:bg-blue-700 transition-all active:scale-95">
+                                REGISTER SEEKER
+                            </button>
+                        </div>
+                    </form>
+                </Modal>
+            )}
+
+            {/* ── NOTIFICATIONS ───────────────────────────────────────────── */}
+            <div className="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
+                {notes.map(({ id, message, type }) => {
+                    const cfg = {
+                        info: { bg: "bg-blue-600", icon: "info-circle" },
+                        success: { bg: "bg-emerald-600", icon: "check-circle" },
+                        warning: { bg: "bg-amber-500", icon: "exclamation-triangle" },
+                        error: { bg: "bg-red-600", icon: "exclamation-circle" },
+                    }[type];
+                    return (
+                        <div key={id} className={`${cfg.bg} text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 text-sm pointer-events-auto`}
+                            style={{ animation: "slideIn .25s ease-out" }}>
+                            <Icon name={cfg.icon} />
+                            <span>{message}</span>
+                            <button onClick={() => dismiss(id)} className="ml-2 opacity-70 hover:opacity-100"><Icon name="times" /></button>
+                        </div>
+                    );
+                })}
+            </div>
+
+            <style>{`
           @keyframes slideIn { from { transform:translateX(120%); opacity:0; } to { transform:translateX(0); opacity:1; } }
           @keyframes fadeDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
           @keyframes fadeUp { from { opacity:0; transform:translateY(20px) scale(.98); } to { opacity:1; transform:translateY(0) scale(1); } }
         `}</style>
-            </div>
-        </>
+        </div>
     );
 }
 
