@@ -66,7 +66,7 @@ const Header: React.FC = () => {
                                 : 'bg-gradient-to-r from-[#6366f1] to-[#f1ac29] hover:from-indigo-500 hover:to-[#e89c1f] text-white shadow-indigo-400/30'
                                 }`}
                         >
-                            Candidate Portal
+                            Candidate Login
                         </button>
                     </div>
                 </div>
